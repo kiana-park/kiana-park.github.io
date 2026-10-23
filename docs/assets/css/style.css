@@ -1,0 +1,921 @@
+/* ==========================================================================
+   kiana-park.github.io: site styles ("bento" layout)
+   ========================================================================== */
+
+/* Design tokens
+   Colors, type and spacing live here. The dark values apply automatically
+   when the visitor's system is in dark mode.
+   -------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light dark;
+
+  /* Color: light theme */
+  --bg: #f6f6f7;
+  --surface: #ffffff;
+  --sunken: #f6f6f7;
+  --border: #e6e6e9;
+  --border-hover: #d2d2d8;
+  --border-strong: #8e8e96;      /* 3:1 on cards and page: interactive edges */
+  --text: #17171a;
+  --text-2: #52525a;             /* 7.7:1 on cards */
+  --text-3: #6c6c75;             /* 5.2:1 on cards, 4.8:1 on page */
+  --accent: #2e5bd4;             /* brand blue: favicon, OG image */
+  --focus: #2e5bd4;
+  --live: #15803d;
+  --glow: rgb(46 91 212 / 0.07);
+  --grain: none;                 /* dark theme only, see below */
+  --dot: #d6d6dc;
+  --mini-line: #dcdce1;
+  --mini-ink: #c4c4cb;
+  --mini-wash: rgb(46 91 212 / 0.08);
+  --mini-edge: rgb(46 91 212 / 0.55);
+  --selection: rgb(46 91 212 / 0.16);
+  --shadow: 0 1px 2px rgb(16 16 20 / 0.04);
+  --shadow-hover: 0 1px 2px rgb(16 16 20 / 0.04), 0 12px 28px -14px rgb(16 16 20 / 0.16);
+
+  /* Type */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --text-xs: 0.6875rem;          /* 11px  mono labels */
+  --text-sm: 0.8125rem;          /* 13px  nav, meta, footer */
+  --text-base: 0.875rem;         /* 14px  body */
+  --text-md: 0.9375rem;          /* 15px  lead, card titles */
+  --text-xl: 1.5rem;             /* 24px  headline on phones */
+  --text-2xl: 1.75rem;           /* 28px  headline on larger screens */
+
+  /* Space: one 4px-based scale */
+  --space-1: 0.25rem;            /* 4 */
+  --space-2: 0.5rem;             /* 8 */
+  --space-3: 0.75rem;            /* 12 */
+  --space-4: 1rem;               /* 16 */
+  --space-5: 1.25rem;            /* 20 */
+  --space-6: 1.5rem;             /* 24 */
+  --space-8: 2rem;               /* 32 */
+  --space-12: 3rem;              /* 48 */
+
+  /* Layout */
+  --page-max: 62.5rem;           /* 1000px */
+  --gutter: var(--space-4);      /* 24px from 600px wide, 32px from 960px (see "Bento grid") */
+  --gap: var(--space-3);
+  --pad: var(--space-4);         /* 20px from 600px wide (see "Bento grid") */
+  --text-inset: calc(var(--pad) + 1px);   /* card padding + border: lines header/footer text up with card text */
+  --radius: 1rem;
+  --radius-sm: 0.5rem;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090b;
+    --surface: #111113;
+    --sunken: #0c0c0e;
+    --border: #202024;
+    --border-hover: #2e2e34;
+    --border-strong: #64646c;
+    --text: #ededef;
+    --text-2: #a1a1a9;
+    --text-3: #85858e;
+    --focus: #6e9bff;
+    --live: #3fcf7f;
+    --glow: rgb(110 155 255 / 0.09);
+    /* Faint grey noise, blended with overlay over the glow: it dithers the
+       8-bit banding a low-alpha gradient shows on near-black, without
+       changing the card's average colour. */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+    --dot: #2a2a30;
+    --mini-line: #2a2a30;
+    --mini-ink: #3a3a42;
+    --mini-wash: rgb(110 155 255 / 0.10);
+    --mini-edge: rgb(110 155 255 / 0.55);
+    --selection: rgb(110 155 255 / 0.28);
+    --shadow: inset 0 1px 0 rgb(255 255 255 / 0.035);
+    --shadow-hover: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 16px 32px -16px rgb(0 0 0 / 0.8);
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --border: var(--border-strong);
+    --border-hover: var(--text-2);
+    --text-3: var(--text-2);
+  }
+}
+
+/* Base
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: var(--space-6);
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5715;           /* 22px */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 500;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+svg {
+  display: block;
+  flex: none;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background-color: var(--selection);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.container {
+  width: min(100% - 2 * var(--gutter), var(--page-max));
+  margin-inline: auto;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 10;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--space-6)));
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* Header and footer
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;         /* 14px name and 13px links share a baseline */
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding-inline: var(--text-inset);
+  padding-bottom: var(--space-4);
+}
+
+.site-name,
+.nav a {
+  margin-inline: calc(-1 * var(--space-1));   /* room for the focus ring */
+  padding: var(--space-1);
+  border-radius: var(--space-1);
+  text-decoration: none;
+}
+
+.site-name {
+  font-weight: 500;
+  transition: color 0.15s var(--ease);
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.nav a {
+  display: block;
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  transition: color 0.15s var(--ease);
+}
+
+.site-footer {
+  padding-inline: var(--text-inset);
+  padding-top: var(--space-4);
+  color: var(--text-3);
+  font-size: var(--text-sm);
+}
+
+/* Bento grid
+   Phones: 2 columns, most cards full width; contact + monogram share a row
+   (stacked on very narrow screens). Tablets (600px+): 2 columns, with
+   projects beside contact + status as on desktop. Desktop (960px+): 4 columns.
+   Breakpoints are in em (37.5em = 600px, 60em = 960px at the default text
+   size), so the layout also adapts when visitors enlarge their text.
+   -------------------------------------------------------------------------- */
+
+.bento {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "intro    intro"
+    "status   status"
+    "about    about"
+    "projects projects"
+    "contact  mark";
+  gap: var(--gap);
+}
+
+/* Very narrow screens (or large text on a phone): Contact takes the full
+   width so its label stays clear of the arrow chip */
+@media (max-width: 19.99em) {
+  .bento {
+    grid-template-areas:
+      "intro    intro"
+      "status   status"
+      "about    about"
+      "projects projects"
+      "contact  contact"
+      "mark     mark";
+  }
+}
+
+@media (min-width: 37.5em) {
+  :root {
+    --gutter: var(--space-6);
+    --pad: var(--space-5);
+  }
+
+  .bento {
+    grid-template-rows: auto auto 1fr 1fr;   /* contact and status share the projects height evenly */
+    grid-template-areas:
+      "intro    intro"
+      "about    mark"
+      "projects contact"
+      "projects status";
+  }
+}
+
+@media (min-width: 60em) {
+  :root {
+    --gutter: var(--space-8);
+  }
+
+  .bento {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: auto minmax(9.5rem, auto) minmax(9.5rem, auto);
+    grid-template-areas:
+      "intro   intro  intro    mark"
+      "about   about  projects projects"
+      "contact status projects projects";
+  }
+}
+
+/* Cards
+   -------------------------------------------------------------------------- */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--pad);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  box-shadow: var(--shadow);
+  scroll-margin-top: var(--space-4);
+  overflow-wrap: break-word;     /* long names or URLs wrap instead of overflowing */
+}
+
+.label {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  line-height: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Intro */
+
+.card--intro {
+  grid-area: intro;
+  justify-content: flex-end;
+  min-height: 10rem;
+  background-image: var(--grain), radial-gradient(ellipse 90% 160% at 100% 0%, var(--glow), transparent);
+  background-blend-mode: overlay, normal;
+}
+
+.intro__title {
+  font-size: var(--text-xl);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.intro__lead {
+  max-width: 30rem;
+  margin-top: var(--space-2);
+  color: var(--text-2);
+  font-size: var(--text-md);
+  line-height: 1.6;
+  text-wrap: balance;            /* two even lines, not one long and one short */
+}
+
+/* Monogram */
+
+.card--mark {
+  grid-area: mark;
+  place-self: stretch;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  max-height: 11rem;             /* square on phones, landscape on wide ones */
+}
+
+.card--mark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1.5px);
+  background-position: center;
+  background-size: 0.75rem 0.75rem;
+  -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent);
+  mask-image: radial-gradient(closest-side, #000 30%, transparent);
+}
+
+.mark {
+  position: relative;
+  width: 3rem;
+  height: 3rem;
+}
+
+.mark__tile {
+  fill: var(--accent);
+}
+
+/* About */
+
+.card--about {
+  grid-area: about;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+.about__text {
+  max-width: 34rem;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.about__lede {
+  color: var(--text);
+}
+
+/* Projects */
+
+.card--projects {
+  grid-area: projects;
+  gap: var(--space-4);
+}
+
+.projects {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* With one project, its link covers the whole card, chip included. To list
+   several, give .project position: relative (each link then covers its own
+   item), remove the chip and the card--link class from the Projects card,
+   and add .project:has(.stretched-link:focus-visible) to the focus-ring rule
+   under "Link cards" so the ring marks the focused project. */
+.project {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.project__preview {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  min-height: 9.25rem;
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--sunken);
+  transition: border-color 0.2s var(--ease);
+}
+
+.project__title {
+  font-size: var(--text-md);
+  line-height: 1.4;
+}
+
+.project__title a {
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.15s var(--ease);
+}
+
+.project__desc {
+  margin-top: var(--space-1);
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.arrow {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s var(--ease);
+}
+
+/* Miniature of this page, drawn as the project's preview image */
+
+.mini {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: 1.6fr 1fr 1fr;
+  grid-template-areas:
+    "i i i m"
+    "a a p p"
+    "c s p p";
+  gap: 3px;
+  width: min(13.5rem, 100% - 2rem);   /* keeps a margin inside narrow wells */
+  aspect-ratio: 1000 / 580;
+}
+
+.mini > span {
+  border: 1px solid var(--mini-line);
+  border-radius: 3px;
+  background-color: var(--surface);
+}
+
+.mini__intro {
+  grid-area: i;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 3px;
+  padding: 6px;
+}
+
+.mini__intro i {
+  display: block;
+  width: 38%;
+  height: 3px;
+  border-radius: 2px;
+  background-color: var(--mini-ink);
+}
+
+.mini__intro i + i {
+  width: 64%;
+  height: 2px;
+}
+
+.mini__mark {
+  grid-area: m;
+  display: grid;
+  place-items: center;
+}
+
+.mini__mark b {
+  width: 30%;
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background-color: var(--accent);
+}
+
+.mini__about {
+  grid-area: a;
+}
+
+.mini > .mini__projects {
+  grid-area: p;
+  border-color: var(--mini-edge);
+  background-color: var(--mini-wash);
+}
+
+.mini__contact {
+  grid-area: c;
+}
+
+.mini__status {
+  grid-area: s;
+  display: grid;
+  place-items: center;
+}
+
+.mini__status b {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--live);
+}
+
+/* Contact */
+
+.card--contact {
+  grid-area: contact;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+.contact__link {
+  text-decoration: none;
+}
+
+.contact__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact__name {
+  font-size: var(--text-md);
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.15s var(--ease);
+}
+
+.contact__handle {
+  margin-top: var(--space-1);
+  color: var(--text-2);
+  font-size: var(--text-sm);
+}
+
+/* Status: a one-row strip on phones (it wraps if a fallback font is wider),
+   a tile like the others from 600px */
+
+.card--status {
+  grid-area: status;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  text-wrap: balance;
+}
+
+.status__dot {
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.4375rem;         /* centers the dot on the first 22px line */
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--live);
+}
+
+.status__dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: inherit;
+  opacity: 0;
+}
+
+/* Link cards
+   The link's ::after stretches over its card, so the whole surface is
+   clickable while the accessible name stays short. Each link card carries
+   the same round arrow chip on its label row.
+   -------------------------------------------------------------------------- */
+
+.chip {
+  position: absolute;
+  top: calc(var(--pad) - 0.375rem);  /* centers the 28px chip on the 16px label row */
+  right: var(--pad);
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--text);
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+/* Reserve the chip's width beside the label, so very large text wraps
+   instead of running under the chip */
+.card--link > .label {
+  padding-inline-end: calc(1.75rem + var(--space-2));
+}
+
+.card--link:has(.stretched-link:focus-visible) .chip {
+  border-color: var(--text);
+  background-color: var(--text);
+  color: var(--surface);
+}
+
+.stretched-link {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stretched-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.card--link:has(.stretched-link:active) {
+  border-color: var(--border-hover);
+}
+
+.stretched-link:focus-visible {
+  outline: none;
+}
+
+.card--link:has(.stretched-link:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@supports not selector(:has(a)) {
+  .stretched-link:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+}
+
+.card--link {
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+@media (hover: hover) {
+  .nav a:hover {
+    color: var(--text);
+  }
+
+  .site-name:hover {
+    color: var(--text-2);
+  }
+
+  .card--link:has(.stretched-link:hover) {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .project:has(.stretched-link:hover) .project__preview {
+    border-color: var(--border-hover);
+  }
+
+  /* Kept separate: a selector list containing :has() is dropped whole by
+     browsers without :has() support */
+  .stretched-link:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .card--contact:has(.stretched-link:hover) .contact__name {
+    text-decoration-color: currentColor;
+  }
+
+  .card--link:has(.stretched-link:hover) .chip {
+    border-color: var(--text);
+    background-color: var(--text);
+    color: var(--surface);
+  }
+}
+
+/* Mark the card a nav link jumped to. ".bento >" ranks this above the link
+   cards' hover and press states, so hovering doesn't undo it. */
+
+.bento > .card:target {
+  border-color: var(--border-strong);
+}
+
+/* Motion: only when the visitor has not asked to reduce it
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) {
+    .card--link:has(.stretched-link:hover) {
+      transform: translateY(-2px);
+    }
+
+    .card--link:has(.stretched-link:hover) .chip .arrow {
+      transform: translate(2px, -2px);
+    }
+
+    /* Extend the hit area by the lift, so a pointer on the card's bottom
+       edge doesn't flicker between hover and rest */
+    .card--link:has(.stretched-link:hover) .stretched-link::after {
+      bottom: -2px;
+    }
+  }
+
+  @media (hover: none) {
+    .card--link:has(.stretched-link:active) {
+      transform: scale(0.99);
+    }
+  }
+
+  /* Two pulses (4.8s) and then still: moving content stops within 5s (WCAG 2.2.2) */
+  .status__dot::after {
+    animation: ping 2.4s cubic-bezier(0, 0, 0.2, 1) 2;
+  }
+
+  .card:target {
+    animation: target-flash 1.6s var(--ease);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes ping {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+@keyframes target-flash {
+  from {
+    border-color: var(--focus);
+  }
+}
+
+/* 404 page
+   -------------------------------------------------------------------------- */
+
+.not-found {
+  align-items: center;
+  padding-block: var(--space-12);
+  text-align: center;
+}
+
+.not-found__code {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+}
+
+.not-found h1 {
+  margin-top: var(--space-2);
+  font-size: var(--text-xl);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.not-found__text {
+  margin-top: var(--space-2);
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.not-found__actions {
+  margin-top: var(--space-6);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+@media (hover: hover) {
+  .button:hover {
+    border-color: var(--text);
+    background-color: var(--text);
+    color: var(--surface);
+  }
+}
+
+/* Larger screens
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 37.5em) {
+  .nav {
+    gap: var(--space-5);
+  }
+
+  .card--intro {
+    min-height: 12rem;
+  }
+
+  .card--mark {
+    aspect-ratio: auto;
+    max-height: none;
+  }
+
+  .card--status {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: var(--space-6);
+  }
+
+  .mark {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
+@media (min-width: 60em) {
+  .card--mark {
+    aspect-ratio: 1;
+  }
+
+  .intro__title,
+  .not-found h1 {
+    font-size: var(--text-2xl);
+  }
+}
+
+/* Windows high contrast: keep the status dot visible in the user's text
+   colour, and draw both link chips in the link colour
+   -------------------------------------------------------------------------- */
+
+@media (forced-colors: active) {
+  .status__dot {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+
+  .chip {
+    border-color: LinkText;
+    color: LinkText;
+  }
+}

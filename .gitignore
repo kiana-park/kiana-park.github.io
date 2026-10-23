@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Editors
+.idea/
+*.swp
+*~
+
+# Dependencies and logs
+node_modules/
+*.log
+
+# Local environment
+.env
+.env.*
+
+# Claude Code local files
+.claude/settings.local.json
+.claude/worktrees/
+CLAUDE.local.md

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kiana Park</title>
+  <meta name="description" content="Personal website of Kiana Park: projects, notes, and things I'm learning.">
+  <link rel="canonical" href="https://kiana-park.github.io/">
+
+  <!-- Light/dark theme follows the visitor's system setting -->
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
+
+  <!-- Icons -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Link previews (Open Graph / Twitter) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kiana Park">
+  <meta property="og:title" content="Kiana Park">
+  <meta property="og:description" content="Personal website of Kiana Park: projects, notes, and things I'm learning.">
+  <meta property="og:url" content="https://kiana-park.github.io/">
+  <meta property="og:image" content="https://kiana-park.github.io/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Dark card layout with a blue K monogram and the text: Hi, I'm Kiana Park. Website: kiana-park.github.io. GitHub: @kiana-park.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Fonts: Geist (400, 500) and Geist Mono (400) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400&display=swap">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header container">
+    <a class="site-name" href="./">Kiana Park</a>
+    <nav aria-label="Main">
+      <ul class="nav" role="list">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="container">
+    <div class="bento">
+
+      <div class="card card--intro">
+        <h1 class="intro__title">Hi, I&rsquo;m Kiana Park.</h1>
+        <p class="intro__lead">Welcome to my corner of the web: a home for my projects, notes, and the things I&rsquo;m learning.</p>
+      </div>
+
+      <div class="card card--mark" aria-hidden="true">
+        <svg class="mark" viewBox="0 0 64 64" width="56" height="56" focusable="false">
+          <rect class="mark__tile" width="64" height="64" rx="14"/>
+          <rect x="0.5" y="0.5" width="63" height="63" rx="13.5" fill="none" stroke="#fff" stroke-opacity="0.16"/>
+          <path d="M22 17v30M22 34 41 17M29.5 27.3 42 47" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <section id="about" class="card card--about" aria-labelledby="about-title">
+        <h2 id="about-title" class="label">About</h2>
+        <p class="about__text"><span class="about__lede">This site is just getting started.</span> Over time it will collect the things I&nbsp;build, write, and learn along&nbsp;the&nbsp;way.</p>
+      </section>
+
+      <section id="projects" class="card card--projects card--link" aria-labelledby="projects-title">
+        <h2 id="projects-title" class="label">Projects</h2>
+        <span class="chip" aria-hidden="true">
+          <svg class="arrow" viewBox="0 0 16 16" width="14" height="14" focusable="false"><path d="M5 11 11 5M6 5h5v5"/></svg>
+        </span>
+        <ul class="projects" role="list">
+          <li class="project">
+            <div class="project__preview" aria-hidden="true">
+              <div class="mini">
+                <span class="mini__intro"><i></i><i></i></span>
+                <span class="mini__mark"><b></b></span>
+                <span class="mini__about"></span>
+                <span class="mini__projects"></span>
+                <span class="mini__contact"></span>
+                <span class="mini__status"><b></b></span>
+              </div>
+            </div>
+            <h3 class="project__title"><a class="stretched-link" href="https://github.com/kiana-park/kiana-park.github.io">kiana-park.github.io</a></h3>
+            <p class="project__desc">This website. Plain HTML, CSS, and JavaScript, published with GitHub Pages.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="contact" class="card card--contact card--link" aria-labelledby="contact-title">
+        <h2 id="contact-title" class="label">Contact</h2>
+        <a class="stretched-link contact__link" href="https://github.com/kiana-park">
+          <span class="contact__text">
+            <span class="contact__name">GitHub</span>
+            <span class="contact__handle">@kiana-park</span>
+          </span>
+          <span class="chip" aria-hidden="true">
+            <svg class="arrow" viewBox="0 0 16 16" width="14" height="14" focusable="false"><path d="M5 11 11 5M6 5h5v5"/></svg>
+          </span>
+        </a>
+      </section>
+
+      <section class="card card--status" aria-labelledby="status-title">
+        <h2 id="status-title" class="label">Status</h2>
+        <p class="status"><span class="status__dot" aria-hidden="true"></span><span>Currently building this site</span></p>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer container">
+    <p>&copy; <span id="year">2026</span> Kiana Park</p>
+  </footer>
+</body>
+</html>
