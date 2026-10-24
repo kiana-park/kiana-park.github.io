@@ -77,3 +77,12 @@ previews treat it as the home page. Then add the new URL to `docs/sitemap.xml`.
 
 `docs/404.html` is the exception: GitHub Pages serves it at whatever URL was
 requested, so its links must start with `/` (for example `/assets/css/style.css`).
+
+### Unlisted pages
+
+Pages in `docs/s/<random-id>/` can only be reached through their link. Nothing on
+the site links to them, they stay out of `sitemap.xml`, and each one carries
+`<meta name="robots" content="noindex, nofollow">` and
+`<meta name="referrer" content="no-referrer">`. They are not private: this
+repository is public, so anyone browsing it on GitHub can see them, and deleted
+files remain in the git history.
