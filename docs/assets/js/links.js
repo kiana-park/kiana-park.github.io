@@ -106,7 +106,15 @@ function row(page) {
     }
   });
 
-  item.append(title, meta, copy);
+  const open = el("a", "button button--sm", "Open");
+  open.href = page.url;
+  open.target = "_blank";
+  open.rel = "noopener";
+  open.setAttribute("aria-label", "Open " + page.title);
+
+  const actions = el("div", "link__actions");
+  actions.append(open, copy);
+  item.append(title, meta, actions);
   return item;
 }
 
