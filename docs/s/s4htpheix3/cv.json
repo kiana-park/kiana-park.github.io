@@ -73,9 +73,9 @@
       },
       "order": [
         "edu",
-        "research",
-        "skills",
         "work",
+        "skills",
+        "research",
         "projects",
         "patents",
         "pubs",
