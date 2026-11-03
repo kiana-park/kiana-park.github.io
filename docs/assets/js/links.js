@@ -165,6 +165,7 @@ function el(tag, className, text) {
 const formatDate = (date) => date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
 // Title and robots tag come from the page's own HTML; "updated" is its latest commit.
+// A page with an editor of its own (the CV) says so with <meta name="editor" content="self">.
 async function describe(entry) {
   const [html, commits] = await Promise.all([
     gh(`${BASE}/contents/${entry.path}/index.html?ref=${REPO.branch}`, { accept: "application/vnd.github.raw" }).catch(() => ""),
@@ -176,6 +177,7 @@ async function describe(entry) {
     url: `${SITE}/s/${entry.name}/`,
     title: doc.title.trim() || entry.name,
     noindex: /noindex/i.test(doc.querySelector('meta[name="robots"]')?.content || ""),
+    ownEditor: doc.querySelector('meta[name="editor"]')?.content === "self",
     updated: commits[0] ? new Date(commits[0].commit.committer.date) : null,
   };
 }
@@ -216,7 +218,16 @@ function linkButtons(page) {
   open.target = "_blank";
   open.rel = "noopener";
   open.setAttribute("aria-label", "Open " + page.title);
-  return [open, copy];
+
+  // links/edit/ edits a page's text; a page with its own editor opens instead
+  const edit = el("a", "button button--sm", "Edit");
+  edit.href = page.ownEditor ? page.url : "edit/?id=" + page.id;
+  if (page.ownEditor) {
+    edit.target = "_blank";
+    edit.rel = "noopener";
+  }
+  edit.setAttribute("aria-label", "Edit " + page.title);
+  return [open, edit, copy];
 }
 
 // Organize mode: a menu of the projects, "No project" and "New project…"

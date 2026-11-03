@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit · Kiana Park</title>
+  <meta name="robots" content="noindex">
+
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+
+  <link rel="icon" href="../../favicon.ico" sizes="32x32">
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400&display=swap">
+
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script src="../../assets/js/edit.js" defer></script>
+</head>
+<body class="editor">
+  <!-- Owner only: assets/js/edit.js loads docs/s/<id>/index.html (?id=<id>)
+       from the GitHub API into the frame, makes its text editable, and
+       commits your changes -->
+  <header class="editor__bar">
+    <a class="editor__back" href="../"><span aria-hidden="true">&larr;</span> Shared links</a>
+    <div class="editor__heading">
+      <h1 id="edit-title" class="editor__title">Loading…</h1>
+      <p id="edit-status" class="editor__status" role="status"></p>
+    </div>
+    <div id="edit-actions" class="editor__actions">
+      <a id="edit-open" class="button button--sm" target="_blank" rel="noopener">Open</a>
+      <button id="edit-discard" class="button button--sm" type="button" disabled>Discard</button>
+      <button id="edit-save" class="button button--sm button--solid" type="button" disabled>Save</button>
+    </div>
+  </header>
+
+  <main class="editor__main">
+    <p id="edit-message" class="editor__message" hidden></p>
+    <iframe id="edit-frame" class="editor__frame" title="The page you're editing" hidden></iframe>
+  </main>
+</body>
+</html>
