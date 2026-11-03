@@ -19,7 +19,7 @@
       "en": "Ph.D. Candidate, Department of Intelligence and Information, Graduate School of Convergence Science and Technology, Seoul National University"
     },
     "sub": {
-      "ko": "지도교수: 서봉원 교수",
+      "ko": "",
       "en": "Advisor: Prof. Bongwon Suh"
     },
     "photo": "photo.jpg",
@@ -81,6 +81,25 @@
         "pubs",
         "awards",
         "teaching"
+      ],
+      "hidden": []
+    },
+    {
+      "id": "v-wn4blm",
+      "label": {
+        "ko": "강사용",
+        "en": "Industry Copy"
+      },
+      "order": [
+        "edu",
+        "work",
+        "teaching",
+        "skills",
+        "research",
+        "projects",
+        "patents",
+        "pubs",
+        "awards"
       ],
       "hidden": []
     }
