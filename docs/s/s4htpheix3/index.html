@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Kieun Park — CV</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* ── UI tokens ─────────────────────────────────────────── */
+:root{
+  --ui-bg:#f2f3f5; --ui-fg:#111827; --ui-mute:#6b7280; --ui-line:#e4e7ec; --ui-seg:#e9ebef;
+  --ui-blue:#2563eb;
+  --font:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--ui-bg);color:var(--ui-fg);font:13px/1.5 var(--font);-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+button,input{font:inherit;color:inherit}
+svg{display:block;flex:none}
+
+/* ── Toolbar ───────────────────────────────────────────── */
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.85);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--ui-line)}
+.bar,.editbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 16px}
+.bar{justify-content:space-between}
+.grp{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:13px;letter-spacing:-.01em;padding-right:4px}
+.seg{display:inline-flex;padding:2px;gap:2px;background:var(--ui-seg);border-radius:8px}
+.seg button{border:0;background:none;padding:3px 10px;border-radius:6px;cursor:pointer;color:var(--ui-mute);font-weight:500;white-space:nowrap;line-height:1.6}
+.seg button:hover{color:var(--ui-fg)}
+.seg button.on{background:#fff;color:var(--ui-fg);box-shadow:0 1px 2px rgba(16,24,40,.1)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ui-line);background:#fff;padding:4px 12px;border-radius:8px;cursor:pointer;font-weight:500;white-space:nowrap;line-height:1.6}
+.btn:hover{background:#f8f9fb}
+.btn.dark{background:#111827;border-color:#111827;color:#fff}
+.btn.dark:hover{background:#262f3f}
+.btn.blue{background:var(--ui-blue);border-color:var(--ui-blue);color:#fff}
+.btn.blue:hover{background:#1d4fd7}
+.btn.ghost{border-color:transparent;background:none;color:var(--ui-mute)}
+.btn.ghost:hover{color:var(--ui-fg);background:var(--ui-seg)}
+.btn.on{background:var(--ui-fg);color:#fff;border-color:var(--ui-fg)}
+.btn:disabled{opacity:.4;cursor:default}
+.status{font-size:12px;color:var(--ui-mute);white-space:nowrap}
+.status.dirty{color:#b45309}
+.status.dirty::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#f59e0b;margin-right:6px;vertical-align:1px}
+.editbar{border-top:1px solid var(--ui-line);font-size:12px;color:var(--ui-mute);padding-top:7px;padding-bottom:7px}
+.editbar .lbl{color:var(--ui-mute)}
+.editbar input[type=text]{width:118px;border:1px solid var(--ui-line);border-radius:6px;padding:2px 7px;background:#fff;font-size:12px;color:var(--ui-fg)}
+.editbar input[type=text]:focus{outline:2px solid rgba(37,99,235,.35);outline-offset:0;border-color:var(--ui-blue)}
+.editbar .btn{font-size:12px;padding:2px 9px}
+.editbar .seg button{font-size:12px;padding:1px 9px}
+.editbar .vr{width:1px;height:16px;background:var(--ui-line)}
+.editbar label.chk{display:inline-flex;align-items:center;gap:5px;cursor:pointer;color:var(--ui-fg)}
+.sw{display:inline-flex;gap:5px}
+.sw button{width:16px;height:16px;border-radius:50%;border:0;cursor:pointer;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.sw button.on{box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--c)}
+
+/* ── Stage & paper ─────────────────────────────────────── */
+#stage{display:flex;justify-content:center;padding:28px 16px 96px}
+.paper{
+  --accent:#1f4fa3; --ink:#15181e; --ink2:#363b45; --mute:#6b717c; --line:#dde1e7; --col:26mm; --gap:4.5mm;
+  position:relative;width:210mm;min-height:297mm;padding:14mm 15mm;background:#fff;border-radius:2px;
+  box-shadow:0 1px 2px rgba(16,24,40,.06),0 10px 30px rgba(16,24,40,.08);
+  font-family:var(--font);font-size:9pt;line-height:1.55;color:var(--ink);
+  letter-spacing:-.005em;word-break:keep-all;overflow-wrap:break-word;
+}
+.paper[lang=en]{letter-spacing:0}
+.paper .loading{color:var(--mute);font-size:10pt;padding:40mm 0;text-align:center}
+
+/* Header */
+.head{display:flex;gap:8mm;align-items:flex-start;padding-bottom:5.5mm;border-bottom:.6pt solid var(--line)}
+.who{flex:1;min-width:0}
+.name{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 2.6mm;margin:0 0 2mm;font-size:21pt;line-height:1.2;font-weight:700;letter-spacing:-.02em}
+.paper[lang=ko] .nm{letter-spacing:.06em}
+.alt{font-size:11pt;font-weight:400;letter-spacing:0;color:var(--mute)}
+.hl{font-size:9.5pt;font-weight:500}
+.sub{font-size:8.5pt;color:var(--mute)}
+.contacts{display:flex;flex-wrap:wrap;align-items:center;row-gap:.5mm;margin:2.2mm 0 0 -4.4mm;font-size:8.3pt;color:var(--ink2);clip-path:inset(-60px -60px -60px 4.4mm)}
+.ct{position:relative}
+.ct::before{content:"·";display:inline-block;width:4.4mm;text-align:center;color:#b3b9c3}
+.contacts a{color:inherit;text-decoration:none}
+.photo{position:relative;flex:none;width:25mm;aspect-ratio:3/4;margin:0;border-radius:1.4mm;overflow:hidden;background:#f1f3f6}
+.photo img{display:block;width:100%;height:100%;object-fit:cover}
+.photo .empty{position:absolute;inset:0;display:grid;place-items:center;color:#9aa1ac;font-size:8pt}
+
+/* Sections */
+.sec{margin-top:6mm}
+.sec-h{position:relative;display:flex;align-items:baseline;gap:2.2mm;margin:0 0 3mm;font-size:10.5pt;line-height:1.3;font-weight:700}
+.sec-sub{font-size:7pt;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.item{position:relative}
+
+/* Entry & publication rows */
+.entry{margin-bottom:3mm}
+.pub{margin-bottom:2.5mm}
+.when{font-size:8pt;color:var(--mute);font-variant-numeric:tabular-nums;line-height:1.5}
+.ttl{font-size:9.4pt;font-weight:600;line-height:1.45}
+.meta{margin-top:.3mm;font-size:8.4pt;color:var(--mute)}
+.bul{margin:.9mm 0 0;padding:0;list-style:none}
+.bul li{position:relative;padding-left:3.2mm;margin-top:.4mm;font-size:8.6pt;color:var(--ink2)}
+.bul li::before{content:"";position:absolute;left:.5mm;top:.62em;width:1mm;height:1mm;border-radius:50%;background:#a0a7b2}
+.auth b{font-weight:700;color:var(--ink)}
+.venue{display:flex;flex-wrap:wrap;gap:0 2.2mm}
+.vn{color:var(--ink2);font-weight:500}
+.note{color:var(--accent);font-weight:600}
+
+/* List rows (label + text) */
+.li{margin-bottom:1.6mm}
+.lab{font-size:8.4pt;font-weight:600;color:var(--ink)}
+.txt{font-size:8.6pt;color:var(--ink2)}
+
+/* Text block */
+.tx{margin-bottom:2mm}
+.body{color:var(--ink2);white-space:pre-line}
+.tags{display:flex;flex-wrap:wrap;gap:1.2mm;margin-top:2mm}
+.tag{padding:.3mm 1.8mm;border:.6pt solid var(--line);border-radius:1mm;background:#f8f9fb;font-size:7.6pt;line-height:1.45;color:var(--ink2)}
+
+/* ── Theme: Modern (date column on the left) ───────────── */
+.theme-modern .sec-h{padding-bottom:1.6mm;border-bottom:.6pt solid var(--line)}
+.theme-modern .sec-h::before{content:"";flex:none;align-self:center;width:1.5mm;height:1.5mm;border-radius:.3mm;background:var(--accent)}
+.theme-modern .entry,.theme-modern .li{display:grid;grid-template-columns:var(--col) minmax(0,1fr);column-gap:var(--gap);align-items:baseline}
+.theme-modern .tx{padding-left:calc(var(--col) + var(--gap))}
+.theme-modern .name .nm{color:var(--ink)}
+
+/* ── Theme: Classic (close to the original Word layout) ── */
+.theme-classic .head{border-bottom:1.2pt solid var(--accent)}
+.theme-classic .name .nm{color:var(--accent)}
+.theme-classic .sec{margin-top:6.5mm}
+.theme-classic .sec-h{color:var(--accent);font-size:11.5pt;padding-bottom:1.4mm;border-bottom:.8pt solid color-mix(in srgb,var(--accent) 45%,#fff)}
+.theme-classic .sec-sub{font-size:inherit;font-weight:inherit;letter-spacing:0;text-transform:none;color:inherit}
+.theme-classic .sec-sub::before{content:"("}
+.theme-classic .sec-sub::after{content:")"}
+.theme-classic .entry>.when{float:right;margin-left:5mm;font-size:8.4pt}
+.theme-classic .ttl{font-size:9.6pt;font-weight:700}
+.theme-classic .entry .meta,.theme-classic .entry .bul,.theme-classic .pub .meta{padding-left:2.4mm}
+.theme-classic .li{position:relative;padding-left:3.2mm}
+.theme-classic .li::before{content:"";position:absolute;left:.5mm;top:.62em;width:1mm;height:1mm;border-radius:50%;background:#a0a7b2}
+.theme-classic .li .lab,.theme-classic .li .txt{display:inline}
+.theme-classic .li .lab:not(:empty)::after{content:":";margin-right:1.2mm}
+
+/* ── Edit mode ─────────────────────────────────────────── */
+.editing [contenteditable]{outline:none;border-radius:2px;transition:background-color .12s,box-shadow .12s;cursor:text}
+.editing [contenteditable]:hover{background:rgba(37,99,235,.06)}
+.editing [contenteditable]:focus{background:rgba(37,99,235,.07);box-shadow:0 0 0 1.5px rgba(37,99,235,.5)}
+.editing [contenteditable]:empty::before{content:attr(data-ph);color:#b4bac4;font-weight:400;font-style:normal;letter-spacing:0;text-transform:none}
+.editing .fb{text-decoration:underline dashed #f59e0b 1px;text-underline-offset:2px}
+.editing .tags:focus{display:block}
+.editing .is-hidden{opacity:.35}
+.editing .is-hidden:hover{opacity:.65}
+.editing .sec.is-hidden{opacity:1}
+.editing .sec.is-hidden>.items,.editing .sec.is-hidden>.add,.editing .sec.is-hidden .sec-t,.editing .sec.is-hidden .sec-sub{opacity:.35}
+.flag{display:none;margin-left:auto;padding:0 6px;border-radius:4px;background:#fef3c7;color:#92400e;font-size:10px;font-weight:600;letter-spacing:0;text-transform:none;line-height:1.6;white-space:nowrap}
+.editing .is-hidden>.sec-h>.flag{display:inline-block}
+
+.grip{position:absolute;right:100%;top:0;display:grid;place-items:center;padding:1px 6px 1px 4px;color:#a3aab5;cursor:grab;opacity:0;transition:opacity .12s}
+.grip:hover{color:#374151}
+.grip:active{cursor:grabbing}
+.acts{position:absolute;left:100%;top:-2px;display:flex;flex-direction:column;gap:2px;padding-left:6px;opacity:0;pointer-events:none;transition:opacity .12s;z-index:2}
+.item:hover>.grip,.item:hover>.acts,.sec-h:hover>.grip,.sec-h:hover>.acts,.ct:hover>.acts{opacity:1;pointer-events:auto}
+.acts button{display:grid;place-items:center;width:22px;height:22px;border:0;border-radius:6px;background:#fff;color:#6b7280;cursor:pointer;box-shadow:0 0 0 1px var(--ui-line)}
+.acts button:hover{color:#111827;background:#f3f4f6}
+.acts button.danger:hover{color:#dc2626;background:#fef2f2}
+.ct>.acts{left:4.4mm;top:auto;bottom:100%;flex-direction:row;padding:0 0 4px}
+
+.add{display:inline-flex;align-items:center;gap:4px;margin-top:.6mm;padding:2px 9px;border:1px dashed #cdd3dc;border-radius:6px;background:none;color:#6b7280;font:500 11px/1.5 var(--font);cursor:pointer}
+.add:hover{border-color:var(--ui-blue);color:var(--ui-blue);background:#eff6ff}
+.theme-modern .sec>.add{margin-left:calc(var(--col) + var(--gap))}
+.addsec{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8mm;padding-top:4mm;border-top:1px dashed #dde1e7;color:#9aa1ac;font:500 11px/1.5 var(--font)}
+.drag-ghost{opacity:.4;background:#eff6ff}
+.photo-ctl{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:4px;padding:14px 4px 5px;background:linear-gradient(transparent,rgba(0,0,0,.55));opacity:0;transition:opacity .12s}
+.photo:hover .photo-ctl,.photo.is-hidden .photo-ctl{opacity:1}
+.photo-ctl button{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 6px;border:0;border-radius:5px;background:rgba(255,255,255,.92);color:#111827;font:600 10px/1 var(--font);cursor:pointer}
+.chip{margin-left:6px;padding:0 7px;font-size:10.5px}
+
+/* ── Toast & dialog ────────────────────────────────────── */
+#toast{position:fixed;left:50%;bottom:22px;z-index:60;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 32px);padding:9px 14px;border-radius:10px;background:#111827;color:#fff;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;pointer-events:none;transform:translate(-50%,8px);transition:opacity .2s,transform .2s}
+#toast.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+#toast button{border:0;background:none;color:#93c5fd;font-weight:600;cursor:pointer;padding:0}
+dialog{width:min(440px,calc(100vw - 32px));padding:22px 22px 18px;border:0;border-radius:14px;color:var(--ui-fg);box-shadow:0 24px 64px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(17,24,39,.35);backdrop-filter:blur(2px)}
+dialog h3{margin:0 0 6px;font-size:15px;font-weight:700}
+dialog p{margin:0 0 10px;color:var(--ui-mute)}
+dialog ol{margin:0 0 14px;padding-left:18px;color:var(--ui-fg)}
+dialog li{margin:3px 0}
+dialog a{color:var(--ui-blue)}
+dialog code{padding:0 4px;border-radius:4px;background:#f3f4f6;font-size:12px}
+dialog input[type=password]{width:100%;padding:8px 10px;border:1px solid var(--ui-line);border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+dialog input[type=password]:focus{outline:2px solid rgba(37,99,235,.35);border-color:var(--ui-blue)}
+dialog .chk{display:flex;align-items:center;gap:6px;margin:10px 0 0;color:var(--ui-fg)}
+dialog .err{min-height:18px;margin:8px 0 0;color:#dc2626;font-size:12px}
+dialog .row{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+
+/* ── Print / PDF ───────────────────────────────────────── */
+@page{size:A4;margin:14mm 15mm}
+@media print{
+  html,body{background:#fff}
+  .top,#toast,dialog{display:none!important}
+  #stage{display:block;padding:0}
+  .paper{width:auto;min-height:0;padding:0;border-radius:0;box-shadow:none;zoom:1!important}
+  .grip,.acts,.add,.addsec,.photo-ctl,.flag,.is-hidden{display:none!important}
+  .editing [contenteditable]:empty::before{content:none}
+  .editing [contenteditable]{background:none!important;box-shadow:none!important;text-decoration:none!important}
+  .head,.item{break-inside:avoid}
+  .sec-h{break-after:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header class="top" id="top">
+  <div class="bar">
+    <div class="grp">
+      <span class="brand">CV</span>
+      <div class="seg" id="variantSeg" aria-label="구성"></div>
+      <div class="seg" id="langSeg" aria-label="언어">
+        <button data-lang="ko">한글</button><button data-lang="en">English</button>
+      </div>
+    </div>
+    <div class="grp">
+      <span class="status" id="status"></span>
+      <button class="btn" id="editBtn" hidden></button>
+      <button class="btn" id="saveBtn" hidden title="GitHub에 저장 (⌘S)">저장</button>
+      <button class="btn dark" id="pdfBtn">PDF 다운로드</button>
+      <button class="btn ghost" id="loginBtn">로그인</button>
+    </div>
+  </div>
+  <div class="editbar" id="editbar" hidden>
+    <span class="lbl">구성 이름</span>
+    <input type="text" id="vNameKo" placeholder="한글 이름" aria-label="구성 이름 (한글)">
+    <input type="text" id="vNameEn" placeholder="English (파일명)" aria-label="구성 이름 (영문)">
+    <button class="btn" data-act="dup-variant">복제</button>
+    <button class="btn" data-act="del-variant">삭제</button>
+    <span class="vr"></span>
+    <span class="lbl">스타일</span>
+    <div class="seg" id="themeSeg"><button data-theme="modern">Modern</button><button data-theme="classic">Classic</button></div>
+    <div class="sw" id="swatches"></div>
+    <label class="chk"><input type="checkbox" id="enSub"> 한글판 영문 제목 병기</label>
+    <span class="vr"></span>
+    <button class="btn" data-act="undo" title="되돌리기 (⌘Z)">되돌리기</button>
+    <button class="btn" data-act="export">JSON 내보내기</button>
+    <button class="btn" data-act="import">가져오기</button>
+    <button class="btn" data-act="discard">수정 취소</button>
+  </div>
+</header>
+
+<main id="stage">
+  <article class="paper theme-modern" id="paper"><div class="loading">불러오는 중…</div></article>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="loginDlg">
+  <form id="loginForm">
+    <h3>편집 로그인</h3>
+    <p>GitHub 토큰으로 로그인해요. 이 저장소에 쓰기 권한이 있는 토큰만 저장할 수 있어요.</p>
+    <ol>
+      <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub에서 Fine-grained 토큰 만들기</a></li>
+      <li>Repository access → Only select repositories → <code>kiana-park.github.io</code></li>
+      <li>Permissions → <b>Contents: Read and write</b></li>
+      <li>생성된 토큰을 아래에 붙여넣기</li>
+    </ol>
+    <input type="password" id="tokenInput" placeholder="github_pat_…" autocomplete="off" spellcheck="false" required>
+    <label class="chk"><input type="checkbox" id="remember" checked> 이 브라우저에서 로그인 유지</label>
+    <p class="err" id="loginErr"></p>
+    <div class="row">
+      <button type="button" class="btn ghost" id="loginCancel">취소</button>
+      <button type="submit" class="btn dark" id="loginGo">로그인</button>
+    </div>
+  </form>
+</dialog>
+
+<input type="file" id="photoInput" accept="image/*" hidden>
+<input type="file" id="jsonInput" accept="application/json,.json" hidden>
+
+<noscript><p style="text-align:center">이 페이지는 JavaScript가 필요해요.</p></noscript>
+
+<script>
+'use strict';
+/* GitHub location of this page's data. Saving commits cv.json (and photo.jpg) here. */
+const CFG = { owner: 'kiana-park', repo: 'kiana-park.github.io', branch: 'main', dir: 'docs/s/s4htpheix3' };
+const KEY = { token: 'cv:token', draft: 'cv:draft:' + CFG.dir };
+const SORTABLE = { src: 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js', sri: 'sha384-HZZ/fukV+9G8gwTNjN7zQDG0Sp7MsZy5DDN6VfY3Be7V9dvQpEpR2jF2HlyFUUjU' };
+const ACCENTS = ['#1f4fa3', '#213a63', '#0f6e66', '#6b3fa0', '#2b2f36'];
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const paper = $('#paper');
+const uid = p => p + '-' + Math.random().toString(36).slice(2, 8);
+const clone = o => JSON.parse(JSON.stringify(o));
+
+const S = {
+  data: null, variant: null, lang: 'ko', edit: false,
+  token: null, sha: null,
+  photo: null,      // new photo (data URL) waiting to be saved
+  photoView: null,  // photo saved this session, shown until Pages redeploys
+  dirty: false, hist: [], sortables: [],
+};
+
+/* ── Icons ─────────────────────────────────────────────── */
+const svg = (d, extra = '') => `<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" ${extra}>${d}</svg>`;
+const I = {
+  grip: `<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><circle cx="6" cy="4" r="1.15"/><circle cx="10" cy="4" r="1.15"/><circle cx="6" cy="8" r="1.15"/><circle cx="10" cy="8" r="1.15"/><circle cx="6" cy="12" r="1.15"/><circle cx="10" cy="12" r="1.15"/></svg>`,
+  eye: svg('<path d="M1.5 8S3.9 3.5 8 3.5 14.5 8 14.5 8 12.1 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/>'),
+  eyeOff: svg('<path d="M6.3 3.7A6.7 6.7 0 0 1 8 3.5C12.1 3.5 14.5 8 14.5 8a12 12 0 0 1-1.7 2.3M4.2 4.9C2.4 6.1 1.5 8 1.5 8s2.4 4.5 6.5 4.5c1.4 0 2.6-.5 3.6-1.1M2 2l12 12"/>'),
+  trash: svg('<path d="M2.5 4.5h11M6.5 4.5V3h3v1.5M4 4.5l.7 8.5h6.6l.7-8.5"/>'),
+  plus: svg('<path d="M8 3.5v9M3.5 8h9"/>', 'width="12" height="12"'),
+  image: svg('<rect x="2" y="3" width="12" height="10" rx="1.5"/><circle cx="6" cy="6.5" r="1.2"/><path d="M14 11l-3.5-3.5L4 13"/>', 'width="11" height="11"'),
+};
+
+/* ── Text helpers ──────────────────────────────────────── */
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const other = l => (l === 'ko' ? 'en' : 'ko');
+// A field is either a plain string (same in both languages) or { ko, en }.
+// Returns [text, isFallback]: falls back to the other language when this one is empty.
+function tx(v, lang = S.lang, fallback = true) {
+  if (v == null) return ['', false];
+  if (typeof v !== 'object') return [String(v), false];
+  if (v[lang]) return [v[lang], false];
+  if (!fallback) return ['', false];
+  const o = v[other(lang)] || '';
+  return [o, !!o];
+}
+const T = v => tx(v)[0];
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const FMT = {
+  authors(t) {
+    const names = [S.data.profile.name?.en, S.data.profile.name?.ko].filter(Boolean).map(n => reEsc(esc(n)));
+    const s = esc(t);
+    return names.length ? s.replace(new RegExp(names.join('|'), 'g'), '<b>$&</b>') : s;
+  },
+  tags: t => t.split(/\s*[·,]\s*/).filter(Boolean).map(x => `<span class="tag">${esc(x)}</span>`).join(''),
+  contact(t) {
+    const s = esc(t);
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t)) return `<a href="mailto:${s}">${s}</a>`;
+    if (/^https?:\/\/\S+$/.test(t)) return `<a href="${s}">${esc(t.replace(/^https?:\/\//, ''))}</a>`;
+    const num = t.replace(/^tel\.?\s*/i, '');
+    if (/^\+?[\d\s\-().]{7,}$/.test(num)) return `<a href="tel:${num.replace(/[^\d+]/g, '')}">${s}</a>`;
+    return s;
+  },
+};
+
+/* ── Editable fields ───────────────────────────────────── */
+// Each editable element points (data-ref) at the object/key it edits; rebuilt every render.
+let refs = [];
+function ed(tag, obj, key, cls, o = {}) {
+  const [text, fb] = o.lang ? [obj[key]?.[o.lang] || '', false] : tx(obj[key], S.lang, !o.nofb);
+  if (!S.edit && !text && !o.keep) return '';
+  const fmt = o.fmt && (!S.edit || !o.viewOnly) ? FMT[o.fmt] : null;
+  const inner = fmt ? fmt(text) : esc(text);
+  const attrs = o.attrs || '';
+  if (!S.edit) return `<${tag} class="${cls}"${attrs}>${inner}</${tag}>`;
+  refs.push({ obj, key, lang: o.lang });
+  return `<${tag} class="${cls}${fb ? ' fb' : ''}"${attrs} contenteditable="plaintext-only" spellcheck="false" data-ref="${refs.length - 1}" data-ph="${esc(o.ph || '')}"`
+    + (fmt ? ` data-fmt="${o.fmt}"` : '') + (o.multi ? ' data-multi' : '')
+    + (fb ? ` title="${S.lang === 'en' ? '영문' : '한글'} 내용이 없어 ${S.lang === 'en' ? '한글' : '영문'}을 표시 중"` : '')
+    + `>${inner}</${tag}>`;
+}
+function rawOf(r) { return r.lang ? (r.obj[r.key]?.[r.lang] || '') : T(r.obj[r.key]); }
+function writeRef(el) {
+  const r = refs[el.dataset.ref];
+  if (!r) return;
+  let val = el.innerText.replace(/ /g, ' ');
+  val = el.hasAttribute('data-multi') ? val.replace(/\n{3,}/g, '\n\n').trim() : val.replace(/\s*\n\s*/g, ' ').trim();
+  const lang = r.lang || S.lang;
+  const cur = r.obj[r.key];
+  if (cur && typeof cur === 'object') cur[lang] = val;
+  else if (typeof cur === 'string' && !r.lang) r.obj[r.key] = val;
+  else { const s = typeof cur === 'string' ? cur : ''; r.obj[r.key] = { ko: s, en: s, [lang]: val }; }
+  el.classList.remove('fb');
+  el.removeAttribute('title');
+  markDirty();
+}
+
+/* ── Variants & visibility ─────────────────────────────── */
+const V = () => S.data.variants.find(v => v.id === S.variant) || S.data.variants[0];
+const isHidden = id => V().hidden.includes(id);
+function toggleHidden(id) {
+  snap();
+  const h = V().hidden, i = h.indexOf(id);
+  i < 0 ? h.push(id) : h.splice(i, 1);
+  changed();
+}
+
+/* ── Rendering ─────────────────────────────────────────── */
+const btn = (act, data, icon, title, cls = '') =>
+  `<button type="button" class="${cls}" data-act="${act}"${Object.entries(data).map(([k, v]) => ` data-${k}="${esc(v)}"`).join('')} title="${esc(title)}" aria-label="${esc(title)}">${icon}</button>`;
+
+function render() {
+  refs = [];
+  const d = S.data, v = V();
+  paper.className = `paper theme-${d.settings.theme}${S.edit ? ' editing' : ''}`;
+  paper.lang = S.lang;
+  paper.style.setProperty('--accent', d.settings.accent);
+  paper.innerHTML = renderHead()
+    + `<div id="secs">${v.order.map(renderSection).join('')}</div>`
+    + (S.edit ? `<div class="addsec">섹션 추가
+        <button type="button" class="add" data-act="add-sec" data-type="entries">${I.plus} 기간형</button>
+        <button type="button" class="add" data-act="add-sec" data-type="list">${I.plus} 분류형</button>
+        <button type="button" class="add" data-act="add-sec" data-type="pubs">${I.plus} 논문형</button>
+        <button type="button" class="add" data-act="add-sec" data-type="text">${I.plus} 글</button></div>` : '');
+  bindSortables();
+  renderBar();
+  fitPaper();
+}
+
+function renderHead() {
+  const p = S.data.profile;
+  const src = S.photo || S.photoView || p.photo;
+  const photoHidden = isHidden('photo');
+  let photo = '';
+  if (S.edit) {
+    photo = `<figure class="photo${photoHidden ? ' is-hidden' : ''}">${src ? `<img src="${esc(src)}" alt="">` : '<div class="empty">사진 없음</div>'}
+      <div class="photo-ctl"><button type="button" data-act="photo-change">${I.image} 변경</button>${btn('photo-hide', {}, photoHidden ? I.eyeOff : I.eye, photoHidden ? '이 구성에서 사진 보이기' : '이 구성에서 사진 숨기기')}</div></figure>`;
+  } else if (src && !photoHidden) {
+    photo = `<figure class="photo"><img src="${esc(src)}" alt=""></figure>`;
+  }
+  const contacts = p.contacts.filter(c => S.edit || !isHidden(c.id)).map(c => {
+    const hid = isHidden(c.id);
+    return `<span class="ct${hid ? ' is-hidden' : ''}" data-id="${esc(c.id)}">${ed('span', c, 'value', 'ct-v', { ph: '연락처', fmt: 'contact', viewOnly: true })}`
+      + (S.edit ? `<span class="acts">${btn('contact-hide', { id: c.id }, hid ? I.eyeOff : I.eye, hid ? '이 구성에서 보이기' : '이 구성에서 숨기기')}${btn('contact-del', { id: c.id }, I.trash, '삭제', 'danger')}</span>` : '')
+      + '</span>';
+  }).join('');
+  return `<header class="head">
+    <div class="who">
+      <h1 class="name">${ed('span', p, 'name', 'nm', { ph: '이름' })}${ed('span', p, 'alt', 'alt', { ph: '다른 표기', nofb: true })}</h1>
+      ${ed('div', p, 'headline', 'hl', { ph: '소속 · 직함' })}
+      ${ed('div', p, 'sub', 'sub', { ph: '부가 정보' })}
+      <div class="contacts">${contacts}${S.edit ? `<button type="button" class="add chip" data-act="contact-add">${I.plus} 연락처</button>` : ''}</div>
+    </div>${photo}
+  </header>`;
+}
+
+function renderSection(id) {
+  const s = S.data.sections[id];
+  if (!s) return '';
+  const hid = isHidden(id);
+  if (hid && !S.edit) return '';
+  const items = s.items.filter(it => S.edit || !isHidden(it.id));
+  if (!S.edit && !items.length) return '';
+  const sub = S.lang === 'ko' && S.data.settings.enSub ? ed('span', s, 'title', 'sec-sub', { lang: 'en', ph: 'English' }) : '';
+  const ctl = S.edit
+    ? `<span class="grip sec-grip" title="드래그해서 섹션 이동">${I.grip}</span>`
+      + `<span class="flag">이 구성에서 숨김</span>`
+      + `<span class="acts">${btn('sec-hide', { sec: id }, hid ? I.eyeOff : I.eye, hid ? '이 구성에서 보이기' : '이 구성에서 숨기기')}${btn('sec-del', { sec: id }, I.trash, '섹션 삭제', 'danger')}</span>`
+    : '';
+  return `<section class="sec t-${s.type}${hid ? ' is-hidden' : ''}" data-sec="${esc(id)}">
+    <h2 class="sec-h">${ed('span', s, 'title', 'sec-t', { ph: '섹션 제목' })}${sub}${ctl}</h2>
+    <div class="items" data-sec="${esc(id)}">${items.map(it => ITEM[s.type](it, id)).join('')}</div>
+    ${S.edit ? `<button type="button" class="add" data-act="add-item" data-sec="${esc(id)}">${I.plus} 항목 추가</button>` : ''}
+  </section>`;
+}
+
+function wrap(it, sid, cls, inner, canBullet) {
+  const hid = isHidden(it.id);
+  const ctl = S.edit
+    ? `<span class="grip item-grip" title="드래그해서 이동">${I.grip}</span>`
+      + `<span class="acts">${btn('item-hide', { id: it.id }, hid ? I.eyeOff : I.eye, hid ? '이 구성에서 보이기' : '이 구성에서 숨기기')}`
+      + (canBullet ? btn('add-bullet', { sec: sid, id: it.id }, I.plus, '세부 내용 추가') : '')
+      + `${btn('item-del', { sec: sid, id: it.id }, I.trash, '삭제', 'danger')}</span>`
+    : '';
+  return `<div class="item ${cls}${hid ? ' is-hidden' : ''}" data-id="${esc(it.id)}">${ctl}${inner}</div>`;
+}
+
+function bullets(it) {
+  const b = it.bullets || (it.bullets = []);
+  const lis = b.map((x, i) => ed('li', b, i, '', { ph: '세부 내용', attrs: ` data-bi="${i}"` })).join('');
+  return lis ? `<ul class="bul">${lis}</ul>` : '';
+}
+
+const ITEM = {
+  entries: (it, sid) => wrap(it, sid, 'entry',
+    ed('div', it, 'period', 'when', { ph: '기간', keep: true })
+    + `<div class="what">${ed('div', it, 'title', 'ttl', { ph: '제목' })}${ed('div', it, 'meta', 'meta', { ph: '역할 · 기관 · 장소' })}${bullets(it)}</div>`, true),
+  pubs: (it, sid) => wrap(it, sid, 'entry pub',
+    ed('div', it, 'year', 'when', { ph: '연도', keep: true })
+    + `<div class="what">${ed('div', it, 'title', 'ttl', { ph: '논문 제목' })}${ed('div', it, 'authors', 'meta auth', { ph: '저자', fmt: 'authors' })}`
+    + `<div class="meta venue">${ed('span', it, 'venue', 'vn', { ph: '학회 · 저널' })}${ed('span', it, 'note', 'note', { ph: '수상 등' })}</div></div>`),
+  list: (it, sid) => wrap(it, sid, 'li',
+    ed('div', it, 'label', 'lab', { ph: '분류', keep: true }) + ed('div', it, 'text', 'txt', { ph: '내용' })),
+  text: (it, sid) => wrap(it, sid, 'tx',
+    ed('div', it, 'body', 'body', { ph: '본문', multi: true }) + ed('div', it, 'tags', 'tags', { ph: '키워드 · 키워드 · …', fmt: 'tags' })),
+};
+
+function renderBar() {
+  const v = V();
+  $('#variantSeg').innerHTML = S.data.variants.map(x =>
+    `<button type="button" data-variant="${esc(x.id)}" class="${x.id === v.id ? 'on' : ''}">${esc(x.label.ko || x.label.en || '이름 없음')}</button>`).join('')
+    + (S.edit ? `<button type="button" data-act="dup-variant" title="현재 구성을 복제해 새 구성 만들기">+</button>` : '');
+  $$('#langSeg button').forEach(b => b.classList.toggle('on', b.dataset.lang === S.lang));
+  const editBtn = $('#editBtn');
+  editBtn.hidden = !S.token;
+  editBtn.textContent = S.edit ? '미리보기' : '편집';
+  $('#saveBtn').hidden = !S.token;
+  $('#loginBtn').textContent = S.token ? '로그아웃' : '로그인';
+  $('#editbar').hidden = !S.edit;
+  if (S.edit) {
+    if (document.activeElement !== $('#vNameKo')) $('#vNameKo').value = v.label.ko || '';
+    if (document.activeElement !== $('#vNameEn')) $('#vNameEn').value = v.label.en || '';
+    $$('#themeSeg button').forEach(b => b.classList.toggle('on', b.dataset.theme === S.data.settings.theme));
+    $('#swatches').innerHTML = ACCENTS.map(c => `<button type="button" style="--c:${c}" data-accent="${c}" class="${c === S.data.settings.accent ? 'on' : ''}" title="${c}"></button>`).join('');
+    $('#enSub').checked = !!S.data.settings.enSub;
+  }
+  renderStatus();
+  history.replaceState(null, '', `#${v.id}/${S.lang}`);
+}
+
+function renderStatus(text) {
+  const st = $('#status'), save = $('#saveBtn');
+  st.classList.toggle('dirty', !text && S.dirty);
+  st.textContent = text || (S.token ? (S.dirty ? '저장 안 됨' : '저장됨') : '');
+  save.disabled = !S.dirty || !!text;
+  save.className = 'btn' + (S.dirty ? ' blue' : '');
+}
+
+function fitPaper() {
+  const z = (window.innerWidth - 24) / 794;   // 210mm ≈ 794px
+  paper.style.zoom = z < 1 ? z.toFixed(3) : '';
+}
+
+/* ── Drag & drop ───────────────────────────────────────── */
+function loadSortable() {
+  if (window.Sortable) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = SORTABLE.src; s.integrity = SORTABLE.sri; s.crossOrigin = 'anonymous';
+    s.onload = resolve; s.onerror = reject;
+    document.head.append(s);
+  });
+}
+function bindSortables() {
+  S.sortables.forEach(x => x.destroy());
+  S.sortables = [];
+  if (!S.edit || !window.Sortable) return;
+  const opts = { animation: 160, ghostClass: 'drag-ghost', onStart: () => document.activeElement?.blur() };
+  S.sortables.push(Sortable.create($('#secs'), { ...opts, handle: '.sec-grip', draggable: '.sec',
+    onEnd(e) {
+      if (e.oldIndex === e.newIndex) return;
+      snap();
+      V().order = $$('#secs > .sec').map(x => x.dataset.sec);
+      changed();
+    } }));
+  $$('.items', paper).forEach(box => S.sortables.push(Sortable.create(box, { ...opts, handle: '.item-grip', draggable: '.item',
+    onEnd(e) {
+      if (e.oldIndex === e.newIndex) return;
+      snap();
+      const ids = $$(':scope > .item', box).map(x => x.dataset.id);
+      S.data.sections[box.dataset.sec].items.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+      changed();
+    } })));
+}
+
+/* ── State changes, undo, drafts ───────────────────────── */
+function snap() {
+  S.hist.push(JSON.stringify({ d: S.data, p: S.photo }));
+  if (S.hist.length > 80) S.hist.shift();
+}
+function undo() {
+  const s = S.hist.pop();
+  if (!s) return toast('되돌릴 작업이 없어요');
+  const o = JSON.parse(s);
+  S.data = o.d; S.photo = o.p;
+  if (!S.data.variants.some(v => v.id === S.variant)) S.variant = S.data.variants[0].id;
+  markDirty();
+  render();
+}
+let draftTimer;
+function markDirty() {
+  S.dirty = true;
+  renderStatus();
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(saveDraft, 400);
+}
+function changed() { markDirty(); render(); }
+function saveDraft() {
+  if (!S.dirty) return;
+  try { localStorage.setItem(KEY.draft, JSON.stringify({ data: S.data, photo: S.photo, sha: S.sha, ts: Date.now() })); }
+  catch { toast('브라우저 저장 공간이 부족해 임시 저장을 못 했어요'); }
+}
+function clearDraft() { clearTimeout(draftTimer); localStorage.removeItem(KEY.draft); }
+
+function normalize(d) {
+  d.settings = Object.assign({ theme: 'modern', accent: ACCENTS[0], enSub: true }, d.settings);
+  d.profile.contacts ||= [];
+  d.profile.contacts.forEach(c => { c.id ||= uid('c'); });
+  const ids = Object.keys(d.sections);
+  ids.forEach(id => d.sections[id].items.forEach(it => { it.id ||= uid('i'); }));
+  if (!d.variants?.length) d.variants = [{ id: 'default', label: { ko: '기본', en: 'Default' }, order: [], hidden: [] }];
+  d.variants.forEach(v => {
+    v.label ||= { ko: v.id, en: v.id };
+    v.hidden ||= [];
+    v.order = (v.order || []).filter(id => ids.includes(id));
+    ids.forEach(id => { if (!v.order.includes(id)) v.order.push(id); });
+  });
+  return d;
+}
+
+/* ── Adding & deleting ─────────────────────────────────── */
+function newItem(type) {
+  const L2 = () => ({ ko: '', en: '' });
+  const id = uid('i');
+  if (type === 'pubs') return { id, year: '', title: '', authors: '', venue: '', note: L2() };
+  if (type === 'list') return { id, label: L2(), text: L2() };
+  if (type === 'text') return { id, body: L2(), tags: L2() };
+  return { id, period: L2(), title: L2(), meta: L2(), bullets: [] };
+}
+function focusEl(sel, selectAll) {
+  const el = typeof sel === 'string' ? $(sel, paper) : sel;
+  if (!el) return;
+  el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  el.focus();
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  if (!selectAll) r.collapse(false);
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+}
+const findSec = id => S.data.sections[id];
+const findItem = (sid, id) => findSec(sid)?.items.find(it => it.id === id);
+
+const ACT = {
+  'sec-hide': b => toggleHidden(b.dataset.sec),
+  'item-hide': b => toggleHidden(b.dataset.id),
+  'contact-hide': b => toggleHidden(b.dataset.id),
+  'photo-hide': () => toggleHidden('photo'),
+  'sec-del'(b) {
+    const id = b.dataset.sec;
+    snap();
+    delete S.data.sections[id];
+    S.data.variants.forEach(v => { v.order = v.order.filter(x => x !== id); v.hidden = v.hidden.filter(x => x !== id); });
+    changed();
+    toast('섹션을 삭제했어요', '되돌리기', undo);
+  },
+  'item-del'(b) {
+    const s = findSec(b.dataset.sec);
+    snap();
+    s.items = s.items.filter(it => it.id !== b.dataset.id);
+    S.data.variants.forEach(v => { v.hidden = v.hidden.filter(x => x !== b.dataset.id); });
+    changed();
+    toast('항목을 삭제했어요', '되돌리기', undo);
+  },
+  'contact-del'(b) {
+    snap();
+    S.data.profile.contacts = S.data.profile.contacts.filter(c => c.id !== b.dataset.id);
+    changed();
+  },
+  'contact-add'() {
+    snap();
+    const c = { id: uid('c'), value: { ko: '', en: '' } };
+    S.data.profile.contacts.push(c);
+    changed();
+    focusEl(`.ct[data-id="${c.id}"] [data-ref]`);
+  },
+  'add-item'(b) {
+    const s = findSec(b.dataset.sec);
+    snap();
+    const it = newItem(s.type);
+    s.items.push(it);
+    changed();
+    const box = $(`.item[data-id="${it.id}"]`, paper);
+    focusEl($('.ttl', box) || $('.lab', box) || $('[data-ref]', box));
+  },
+  'add-bullet'(b) {
+    const it = findItem(b.dataset.sec, b.dataset.id);
+    snap();
+    (it.bullets ||= []).push({ ko: '', en: '' });
+    changed();
+    focusEl(`.item[data-id="${it.id}"] .bul li:last-child`);
+  },
+  'add-sec'(b) {
+    const type = b.dataset.type, id = uid('sec');
+    const titles = { entries: ['새 섹션', 'New Section'], list: ['새 섹션', 'New Section'], pubs: ['논문', 'Publications'], text: ['소개', 'About'] };
+    snap();
+    S.data.sections[id] = { type, title: { ko: titles[type][0], en: titles[type][1] }, items: [newItem(type)] };
+    // New sections show up only in the current variant; the others get them hidden.
+    S.data.variants.forEach(v => { v.order.push(id); if (v.id !== S.variant) v.hidden.push(id); });
+    changed();
+    focusEl(`.sec[data-sec="${id}"] .sec-t`, true);
+  },
+  'photo-change': () => $('#photoInput').click(),
+  'dup-variant'() {
+    snap();
+    const v = clone(V());
+    v.id = uid('v');
+    v.label = { ko: (V().label.ko || '') + ' 사본', en: (V().label.en || 'Variant') + ' Copy' };
+    S.data.variants.push(v);
+    S.variant = v.id;
+    changed();
+    $('#vNameKo').focus(); $('#vNameKo').select();
+  },
+  'del-variant'() {
+    if (S.data.variants.length < 2) return toast('구성이 하나뿐이라 삭제할 수 없어요');
+    if (!confirm(`‘${V().label.ko || V().label.en}’ 구성을 삭제할까요?`)) return;
+    snap();
+    S.data.variants = S.data.variants.filter(v => v.id !== S.variant);
+    S.variant = S.data.variants[0].id;
+    changed();
+    toast('구성을 삭제했어요', '되돌리기', undo);
+  },
+  undo,
+  export() {
+    const blob = new Blob([JSON.stringify(S.data, null, 2) + '\n'], { type: 'application/json' });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'cv.json' });
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  },
+  import: () => $('#jsonInput').click(),
+  async discard() {
+    if (!S.dirty) return toast('취소할 수정 사항이 없어요');
+    if (!confirm('저장하지 않은 수정 사항을 모두 버리고 마지막 저장본으로 되돌릴까요?')) return;
+    clearDraft();
+    S.photo = null; S.hist = []; S.dirty = false;
+    try { await loadRemote(); } catch (e) { toast('불러오기 실패: ' + e.message); }
+    render();
+  },
+};
+
+/* ── Paper events (editing) ────────────────────────────── */
+let preFocus = null;
+paper.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (b && ACT[b.dataset.act]) { e.preventDefault(); ACT[b.dataset.act](b); }
+});
+paper.addEventListener('focusin', e => {
+  const el = e.target.closest('[data-ref]');
+  if (!el) return;
+  preFocus = JSON.stringify({ d: S.data, p: S.photo });
+  if (el.dataset.fmt) el.textContent = rawOf(refs[el.dataset.ref]);
+});
+paper.addEventListener('focusout', e => {
+  const el = e.target.closest('[data-ref]');
+  if (el?.dataset.fmt) el.innerHTML = FMT[el.dataset.fmt](rawOf(refs[el.dataset.ref]));
+});
+paper.addEventListener('input', e => {
+  const el = e.target.closest('[data-ref]');
+  if (!el) return;
+  if (preFocus) { S.hist.push(preFocus); preFocus = null; }
+  writeRef(el);
+});
+paper.addEventListener('keydown', e => {
+  const el = e.target.closest('[data-ref]');
+  if (!el || e.isComposing || e.keyCode === 229) return;
+  const li = el.matches('.bul li') ? el : null;
+  if (e.key === 'Enter' && !e.shiftKey) {
+    if (li) {
+      e.preventDefault();
+      const it = findItem(el.closest('.sec').dataset.sec, el.closest('.item').dataset.id);
+      const i = +li.dataset.bi;
+      snap();
+      it.bullets.splice(i + 1, 0, { ko: '', en: '' });
+      changed();
+      focusEl(`.item[data-id="${it.id}"] .bul li[data-bi="${i + 1}"]`);
+    } else if (!el.hasAttribute('data-multi')) {
+      e.preventDefault();
+      el.blur();
+    }
+  } else if (e.key === 'Backspace' && li && li.textContent === '') {
+    e.preventDefault();
+    const it = findItem(el.closest('.sec').dataset.sec, el.closest('.item').dataset.id);
+    const i = +li.dataset.bi;
+    snap();
+    it.bullets.splice(i, 1);
+    changed();
+    if (i > 0) focusEl(`.item[data-id="${it.id}"] .bul li[data-bi="${i - 1}"]`);
+  } else if (e.key === 'Escape') {
+    el.blur();
+  }
+});
+
+/* ── Toolbar events ────────────────────────────────────── */
+$('#variantSeg').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.act) return ACT[b.dataset.act](b);
+  S.variant = b.dataset.variant;
+  render();
+});
+$('#langSeg').addEventListener('click', e => {
+  const b = e.target.closest('button[data-lang]');
+  if (!b || b.dataset.lang === S.lang) return;
+  S.lang = b.dataset.lang;
+  render();
+});
+$('#editbar').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (b) return ACT[b.dataset.act](b);
+  const t = e.target.closest('[data-theme]');
+  if (t && t.dataset.theme !== S.data.settings.theme) { snap(); S.data.settings.theme = t.dataset.theme; return changed(); }
+  const a = e.target.closest('[data-accent]');
+  if (a) { snap(); S.data.settings.accent = a.dataset.accent; changed(); }
+});
+$('#enSub').addEventListener('change', e => { snap(); S.data.settings.enSub = e.target.checked; changed(); });
+['Ko', 'En'].forEach(L => {
+  const inp = $('#vName' + L);
+  inp.addEventListener('focus', () => snap());
+  inp.addEventListener('input', () => {
+    V().label[L.toLowerCase()] = inp.value.trim();
+    markDirty();
+    renderBar();
+  });
+});
+$('#editBtn').addEventListener('click', async () => {
+  S.edit = !S.edit;
+  if (S.edit) await loadSortable().catch(() => toast('드래그 기능을 불러오지 못했어요'));
+  render();
+});
+$('#saveBtn').addEventListener('click', save);
+$('#pdfBtn').addEventListener('click', downloadPdf);
+$('#loginBtn').addEventListener('click', () => (S.token ? logout() : openLogin()));
+
+$('#photoInput').addEventListener('change', async e => {
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
+  try {
+    S.photo = await resizePhoto(f);
+    snap();
+    V().hidden = V().hidden.filter(x => x !== 'photo');
+    changed();
+    toast('사진을 바꿨어요. 저장하면 반영돼요.');
+  } catch { toast('이 이미지는 열 수 없어요 (JPG · PNG를 써 주세요)'); }
+});
+$('#jsonInput').addEventListener('change', async e => {
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!d.sections || !d.profile) throw new Error('CV 데이터 형식이 아니에요');
+    snap();
+    S.data = normalize(d);
+    if (!S.data.variants.some(v => v.id === S.variant)) S.variant = S.data.variants[0].id;
+    changed();
+    toast('가져왔어요. 저장하면 반영돼요.');
+  } catch (err) { toast('가져오기 실패: ' + err.message); }
+});
+
+document.addEventListener('keydown', e => {
+  const mod = e.metaKey || e.ctrlKey;
+  if (mod && e.key.toLowerCase() === 's' && S.token) { e.preventDefault(); if (S.dirty) save(); }
+  else if (mod && e.key.toLowerCase() === 'z' && !e.shiftKey && S.edit) {
+    const a = document.activeElement;
+    if (a && (a.isContentEditable || a.tagName === 'INPUT')) return;
+    e.preventDefault();
+    undo();
+  }
+});
+window.addEventListener('resize', fitPaper);
+
+/* ── Photo ─────────────────────────────────────────────── */
+async function resizePhoto(file) {
+  const img = await createImageBitmap(file);
+  const ratio = 3 / 4;
+  let sw = img.width, sh = img.height, sx = 0, sy = 0;
+  if (sw / sh > ratio) { sw = sh * ratio; sx = (img.width - sw) / 2; } else { sh = sw / ratio; sy = (img.height - sh) / 2; }
+  const w = Math.min(600, Math.round(sw)), h = Math.round(w / ratio);
+  const c = Object.assign(document.createElement('canvas'), { width: w, height: h });
+  const g = c.getContext('2d');
+  g.imageSmoothingQuality = 'high';
+  g.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+  return c.toDataURL('image/jpeg', 0.9);
+}
+
+/* ── PDF (browser print → "Save as PDF") ───────────────── */
+function pdfName() {
+  const n = (S.data.profile.name?.en || 'CV').trim().replace(/\s+/g, '_');
+  const v = (V().label.en || V().id).trim().replace(/\s+/g, '_');
+  return `${n}_CV_${S.lang.toUpperCase()}_${v}`;
+}
+let printState = null;
+function beforePrint() {
+  if (printState) return;
+  printState = { title: document.title, edit: S.edit };
+  document.title = pdfName();
+  if (document.activeElement?.isContentEditable) document.activeElement.blur();
+  if (S.edit) { S.edit = false; render(); }
+  paper.style.zoom = '';
+}
+function afterPrint() {
+  if (!printState) return;
+  document.title = printState.title;
+  if (printState.edit) S.edit = true;
+  printState = null;
+  render();
+}
+window.addEventListener('beforeprint', beforePrint);
+window.addEventListener('afterprint', afterPrint);
+function downloadPdf() {
+  toast('인쇄 창에서 대상을 ‘PDF로 저장’으로 고르세요');
+  beforePrint();
+  setTimeout(() => window.print(), 60);
+}
+
+/* ── GitHub API ────────────────────────────────────────── */
+async function gh(method, path, body, token = S.token) {
+  const r = await fetch('https://api.github.com' + path, {
+    method, cache: 'no-store',
+    headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!r.ok) {
+    const j = await r.json().catch(() => ({}));
+    const err = new Error(j.message || r.statusText);
+    err.status = r.status;
+    throw err;
+  }
+  return r.status === 204 ? null : r.json();
+}
+const repoPath = file => `/repos/${CFG.owner}/${CFG.repo}/contents/${CFG.dir}/${file}`;
+function b64enc(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+const b64dec = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, '')), c => c.charCodeAt(0)));
+async function shaOf(file) {
+  try { return (await gh('GET', repoPath(file) + '?ref=' + CFG.branch)).sha; }
+  catch (e) { if (e.status === 404) return undefined; throw e; }
+}
+
+async function loadPublic() {
+  const r = await fetch('cv.json', { cache: 'no-cache' });
+  if (!r.ok) throw new Error('cv.json ' + r.status);
+  S.data = normalize(await r.json());
+}
+async function loadRemote() {
+  const f = await gh('GET', repoPath('cv.json') + '?ref=' + CFG.branch);
+  S.data = normalize(JSON.parse(b64dec(f.content)));
+  S.sha = f.sha;
+}
+
+async function save() {
+  if (!S.token || !S.dirty) return;
+  if (document.activeElement?.isContentEditable) document.activeElement.blur();
+  renderStatus('저장 중…');
+  try {
+    if (S.photo) {
+      const sha = await shaOf('photo.jpg');
+      await gh('PUT', repoPath('photo.jpg'), { message: 'Update CV photo', content: S.photo.split(',')[1], branch: CFG.branch, ...(sha ? { sha } : {}) });
+      S.data.profile.photo = 'photo.jpg?v=' + Date.now();
+      S.photoView = S.photo;
+      S.photo = null;
+    }
+    const body = JSON.stringify(S.data, null, 2) + '\n';
+    let res;
+    try {
+      res = await gh('PUT', repoPath('cv.json'), { message: 'Update CV', content: b64enc(body), branch: CFG.branch, sha: S.sha });
+    } catch (e) {
+      if (e.status !== 409 && e.status !== 422) throw e;
+      if (!confirm('다른 곳에서 먼저 저장된 버전이 있어요. 지금 내용으로 덮어쓸까요?')) { renderStatus(); return; }
+      res = await gh('PUT', repoPath('cv.json'), { message: 'Update CV', content: b64enc(body), branch: CFG.branch, sha: await shaOf('cv.json') });
+    }
+    S.sha = res.content.sha;
+    S.dirty = false;
+    clearDraft();
+    renderStatus();
+    render();
+    toast('저장했어요. 공개 페이지에는 1~2분 뒤 반영돼요.');
+  } catch (e) {
+    renderStatus();
+    if (e.status === 401) { toast('로그인이 만료됐어요. 다시 로그인해 주세요.'); logout(true); }
+    else if (e.status === 403 || e.status === 404) toast('저장 권한이 없어요. 토큰에 이 저장소의 Contents: Read and write 권한이 있는지 확인해 주세요.');
+    else toast('저장 실패: ' + e.message);
+  }
+}
+
+/* ── Login ─────────────────────────────────────────────── */
+const dlg = $('#loginDlg');
+function openLogin() {
+  $('#loginErr').textContent = '';
+  $('#tokenInput').value = '';
+  dlg.showModal();
+  $('#tokenInput').focus();
+}
+$('#loginCancel').addEventListener('click', () => dlg.close());
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const token = $('#tokenInput').value.trim();
+  const go = $('#loginGo');
+  go.disabled = true;
+  $('#loginErr').textContent = '';
+  try {
+    const repo = await gh('GET', `/repos/${CFG.owner}/${CFG.repo}`, null, token);
+    if (!repo.permissions?.push) throw new Error('이 저장소에 쓰기 권한이 없는 계정이에요.');
+    ($('#remember').checked ? localStorage : sessionStorage).setItem(KEY.token, token);
+    S.token = token;
+    const keep = S.data && !S.dirty ? { variant: S.variant } : null;
+    await loadRemote();
+    restoreDraft();
+    if (keep && S.data.variants.some(v => v.id === keep.variant)) S.variant = keep.variant;
+    await loadSortable().catch(() => {});
+    S.edit = true;
+    dlg.close();
+    render();
+    toast('로그인했어요. 글자를 눌러 바로 고칠 수 있어요.');
+  } catch (err) {
+    $('#loginErr').textContent = err.status === 401 ? '토큰이 올바르지 않아요.' : err.message;
+  } finally {
+    go.disabled = false;
+  }
+});
+function logout(silent) {
+  if (!silent && S.dirty && !confirm('저장하지 않은 수정 사항이 있어요. 이 브라우저에 임시 저장된 채로 로그아웃할까요?')) return;
+  localStorage.removeItem(KEY.token);
+  sessionStorage.removeItem(KEY.token);
+  S.token = null; S.edit = false; S.dirty = false; S.photo = null; S.hist = [];
+  loadPublic().catch(() => {}).finally(render);
+}
+function restoreDraft() {
+  let d;
+  try { d = JSON.parse(localStorage.getItem(KEY.draft)); } catch { d = null; }
+  if (!d?.data) return;
+  const when = new Date(d.ts).toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const same = d.sha === S.sha;
+  if (same || confirm(`${when}에 편집하다 저장하지 않은 내용이 있어요.\n그 뒤로 다른 곳에서 저장된 버전이 있어요. 임시 저장본을 불러올까요?\n(취소하면 임시 저장본을 버려요)`)) {
+    S.data = normalize(d.data);
+    S.photo = d.photo || null;
+    S.dirty = true;
+    if (same) setTimeout(() => toast(`${when}에 편집하던 내용을 불러왔어요`), 300);
+  } else {
+    clearDraft();
+  }
+}
+
+/* ── Toast ─────────────────────────────────────────────── */
+let toastTimer;
+function toast(msg, actionLabel, action) {
+  const t = $('#toast');
+  t.innerHTML = `<span>${esc(msg)}</span>` + (actionLabel ? `<button type="button">${esc(actionLabel)}</button>` : '');
+  if (action) t.querySelector('button').onclick = () => { t.classList.remove('show'); action(); };
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), actionLabel ? 6000 : 3800);
+}
+
+/* ── Boot ──────────────────────────────────────────────── */
+(async function boot() {
+  const [v, l] = decodeURIComponent(location.hash.slice(1)).split('/');
+  if (l === 'ko' || l === 'en') S.lang = l;
+  S.token = localStorage.getItem(KEY.token) || sessionStorage.getItem(KEY.token);
+  try {
+    if (S.token) {
+      try { await loadRemote(); }
+      catch (e) {
+        if (e.status === 401) { localStorage.removeItem(KEY.token); sessionStorage.removeItem(KEY.token); S.token = null; toast('로그인이 만료됐어요. 다시 로그인해 주세요.'); }
+        else toast('GitHub에서 불러오지 못해 공개본을 표시해요');
+        await loadPublic();
+      }
+      if (S.token) {
+        restoreDraft();
+        await loadSortable().catch(() => {});
+        S.edit = true;
+      }
+    } else {
+      await loadPublic();
+    }
+  } catch (e) {
+    paper.innerHTML = `<div class="loading">CV 데이터를 불러오지 못했어요 (${esc(e.message)})</div>`;
+    return;
+  }
+  S.variant = S.data.variants.some(x => x.id === v) ? v : S.data.variants[0].id;
+  render();
+})();
+</script>
+</body>
+</html>
