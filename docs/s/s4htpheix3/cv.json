@@ -6,44 +6,103 @@
     "enSub": true
   },
   "profile": {
-    "name": { "ko": "박기은", "en": "Kieun Park" },
-    "alt": { "ko": "Kieun Park", "en": "" },
+    "name": {
+      "ko": "박기은",
+      "en": "Kieun Park"
+    },
+    "alt": {
+      "ko": "Kieun Park",
+      "en": ""
+    },
     "headline": {
       "ko": "서울대학교 융합과학기술대학원 지능정보융합학과 석·박사통합과정",
       "en": "Ph.D. Candidate, Department of Intelligence and Information, Graduate School of Convergence Science and Technology, Seoul National University"
     },
-    "sub": { "ko": "지도교수: 서봉원 교수", "en": "Advisor: Prof. Bongwon Suh" },
+    "sub": {
+      "ko": "지도교수: 서봉원 교수",
+      "en": "Advisor: Prof. Bongwon Suh"
+    },
     "photo": "photo.jpg",
     "contacts": [
-      { "id": "c-snu", "value": "kieun.park@snu.ac.kr" },
-      { "id": "c-gmail", "value": "pkiin11po@gmail.com" },
-      { "id": "c-tel", "value": "+82-10-8843-2611" },
-      { "id": "c-addr", "value": { "ko": "서울특별시 관악구 관악로 1", "en": "1 Gwanak-ro, Gwanak-gu, Seoul, Korea" } }
+      {
+        "id": "c-snu",
+        "value": "kieun.park@snu.ac.kr"
+      },
+      {
+        "id": "c-gmail",
+        "value": "pkiin11po@gmail.com"
+      },
+      {
+        "id": "c-tel",
+        "value": "+82-10-8843-2611"
+      },
+      {
+        "id": "c-addr",
+        "value": {
+          "ko": "서울특별시 관악구 관악로 1",
+          "en": "1 Gwanak-ro, Gwanak-gu, Seoul, Korea"
+        }
+      }
     ]
   },
   "variants": [
     {
       "id": "academic",
-      "label": { "ko": "아카데미용", "en": "Academic" },
-      "order": ["edu", "research", "teaching", "projects", "pubs", "awards", "skills", "work", "patents"],
+      "label": {
+        "ko": "아카데미용",
+        "en": "Academic"
+      },
+      "order": [
+        "edu",
+        "research",
+        "teaching",
+        "projects",
+        "pubs",
+        "awards",
+        "skills",
+        "work",
+        "patents"
+      ],
       "hidden": []
     },
     {
       "id": "industry",
-      "label": { "ko": "기업용", "en": "Industry" },
-      "order": ["research", "skills", "work", "projects", "edu", "patents", "pubs", "awards", "teaching"],
+      "label": {
+        "ko": "기업용",
+        "en": "Industry"
+      },
+      "order": [
+        "research",
+        "skills",
+        "work",
+        "projects",
+        "edu",
+        "patents",
+        "pubs",
+        "awards",
+        "teaching"
+      ],
       "hidden": []
     }
   ],
   "sections": {
     "edu": {
       "type": "entries",
-      "title": { "ko": "학력", "en": "Education" },
+      "title": {
+        "ko": "학력",
+        "en": "Education"
+      },
       "items": [
         {
           "id": "edu-snu",
-          "period": { "ko": "2019.03 ~ 현재", "en": "2019.03 – Present" },
-          "title": { "ko": "서울대학교 융합과학기술대학원 지능정보융합학과", "en": "Seoul National University" },
+          "period": {
+            "ko": "2019.03 ~ 현재",
+            "en": "2019.03 – Present"
+          },
+          "title": {
+            "ko": "서울대학교 융합과학기술대학원 지능정보융합학과",
+            "en": "Seoul National University"
+          },
           "meta": {
             "ko": "석·박사통합과정 · 박사 수료(Ph.D. Candidate, 2022.08)  |  인간중심컴퓨팅 연구실(Human-Centered Computing Lab)  |  지도교수: 서봉원 교수  |  서울",
             "en": "Integrated M.S./Ph.D. Program, Dept. of Intelligence and Information, Graduate School of Convergence Science and Technology  |  Ph.D. Candidate (2022.08)  |  Human-Centered Computing Lab  |  Advisor: Prof. Bongwon Suh  |  Seoul"
@@ -52,8 +111,14 @@
         },
         {
           "id": "edu-postech",
-          "period": { "ko": "2011.03 ~ 2016.02", "en": "2011.03 – 2016.02" },
-          "title": { "ko": "포항공과대학교(POSTECH) 컴퓨터공학과", "en": "Pohang University of Science and Technology (POSTECH)" },
+          "period": {
+            "ko": "2011.03 ~ 2016.02",
+            "en": "2011.03 – 2016.02"
+          },
+          "title": {
+            "ko": "포항공과대학교(POSTECH) 컴퓨터공학과",
+            "en": "Pohang University of Science and Technology (POSTECH)"
+          },
           "meta": {
             "ko": "학사(Bachelor of Computer Science and Engineering)  |  포항",
             "en": "B.S. in Computer Science and Engineering  |  Pohang"
@@ -64,7 +129,10 @@
     },
     "research": {
       "type": "text",
-      "title": { "ko": "연구 관심분야", "en": "Research Interests" },
+      "title": {
+        "ko": "연구 관심분야",
+        "en": "Research Interests"
+      },
       "items": [
         {
           "id": "ri-1",
@@ -81,146 +149,355 @@
     },
     "teaching": {
       "type": "entries",
-      "title": { "ko": "강의 및 조교 경력", "en": "Teaching Experience" },
+      "title": {
+        "ko": "강의 및 조교 경력",
+        "en": "Teaching Experience"
+      },
       "items": [
         {
+          "id": "i-kyx3gm",
+          "period": {
+            "ko": "2026 ~ 현재",
+            "en": ""
+          },
+          "title": {
+            "ko": "천안형 글로벌인재 육성 사업",
+            "en": ""
+          },
+          "meta": {
+            "ko": "메인 강사 — AX 역량 빌드업 (기초/실무 전과정) : AI, 바이브코딩, 업무자동화 등",
+            "en": ""
+          },
+          "bullets": []
+        },
+        {
+          "id": "i-4wtyl2",
+          "period": {
+            "ko": "2026 ~ 현재",
+            "en": ""
+          },
+          "title": {
+            "ko": "로컬크리에이터 지원사업 『아산 로컬 엔 청년』 (AX 기반 엑설러레이팅 프로그램)",
+            "en": ""
+          },
+          "meta": {
+            "ko": "총괄 강사, 멘토링 — 바이브코딩부터 배포까지",
+            "en": ""
+          },
+          "bullets": []
+        },
+        {
           "id": "t-ds2-llm",
-          "period": { "ko": "2025 ~ 현재", "en": "2025 – Present" },
-          "title": { "ko": "서울대학교 데이터사이언스 혁신전문가 양성과정 (삼성 DS² Program)", "en": "Data Science Innovation Expert Program (Samsung DS² Program), Seoul National University" },
-          "meta": { "ko": "대표 조교 — LLM·AI 실습 강의 담당(Instructor for Practical Sessions)", "en": "Head Teaching Assistant — Instructor for LLM/AI Practical Sessions" },
+          "period": {
+            "ko": "2025 ~ 현재",
+            "en": "2025 – Present"
+          },
+          "title": {
+            "ko": "서울대학교 데이터사이언스 혁신전문가 양성과정 (삼성 DS² Program)",
+            "en": "Data Science Innovation Expert Program (Samsung DS² Program), Seoul National University"
+          },
+          "meta": {
+            "ko": "대표 조교 — LLM·AI 실습 강의 담당(Instructor for Practical Sessions)",
+            "en": "Head Teaching Assistant — Instructor for LLM/AI Practical Sessions"
+          },
           "bullets": []
         },
         {
           "id": "t-snu-ml",
-          "period": { "ko": "2024", "en": "2024" },
-          "title": { "ko": "서울대학교 「컴퓨팅의 응용: 머신러닝 개념과 응용」", "en": "“Applications of Computing: Machine Learning Concepts and Applications,” Seoul National University" },
-          "meta": { "ko": "조교 — Python 실습 보조", "en": "Teaching Assistant — Python lab sessions" },
+          "period": {
+            "ko": "2024",
+            "en": "2024"
+          },
+          "title": {
+            "ko": "서울대학교 「컴퓨팅의 응용: 머신러닝 개념과 응용」",
+            "en": "“Applications of Computing: Machine Learning Concepts and Applications,” Seoul National University"
+          },
+          "meta": {
+            "ko": "조교 — Python 실습 보조",
+            "en": "Teaching Assistant — Python lab sessions"
+          },
           "bullets": []
         },
         {
           "id": "t-ds2-spark",
-          "period": { "ko": "2020 ~ 2024", "en": "2020 – 2024" },
-          "title": { "ko": "서울대학교 데이터사이언스 혁신전문가 양성과정 (삼성 DS² Program)", "en": "Data Science Innovation Expert Program (Samsung DS² Program), Seoul National University" },
-          "meta": { "ko": "대표 조교 — PySpark 실습 강의 담당(Instructor for Practical Sessions)", "en": "Head Teaching Assistant — Instructor for PySpark Practical Sessions" },
+          "period": {
+            "ko": "2020 ~ 2024",
+            "en": "2020 – 2024"
+          },
+          "title": {
+            "ko": "서울대학교 데이터사이언스 혁신전문가 양성과정 (삼성 DS² Program)",
+            "en": "Data Science Innovation Expert Program (Samsung DS² Program), Seoul National University"
+          },
+          "meta": {
+            "ko": "대표 조교 — PySpark 실습 강의 담당(Instructor for Practical Sessions)",
+            "en": "Head Teaching Assistant — Instructor for PySpark Practical Sessions"
+          },
           "bullets": []
         },
         {
           "id": "t-hana",
-          "period": { "ko": "2019", "en": "2019" },
-          "title": { "ko": "하나금융그룹 데이터 전문가 양성과정 (HANA DxP Program)", "en": "Hana Financial Group Data Expert Program (HANA DxP Program)" },
-          "meta": { "ko": "조교 — PySpark 실습 보조", "en": "Teaching Assistant — PySpark lab sessions" },
+          "period": {
+            "ko": "2019",
+            "en": "2019"
+          },
+          "title": {
+            "ko": "하나금융그룹 데이터 전문가 양성과정 (HANA DxP Program)",
+            "en": "Hana Financial Group Data Expert Program (HANA DxP Program)"
+          },
+          "meta": {
+            "ko": "조교 — PySpark 실습 보조",
+            "en": "Teaching Assistant — PySpark lab sessions"
+          },
           "bullets": []
         }
       ]
     },
     "projects": {
       "type": "entries",
-      "title": { "ko": "연구·산학 프로젝트 (AI 도입·적용 중심)", "en": "Research & Industry Projects" },
+      "title": {
+        "ko": "연구·산학 프로젝트 (AI 도입·적용 중심)",
+        "en": "Research & Industry Projects"
+      },
       "items": [
         {
           "id": "p-aif",
-          "period": { "ko": "2025 ~ 2026", "en": "2025 – 2026" },
-          "title": { "ko": "물류기업 AI 이메일 자동화 컨설팅 및 프로토타입 개발 — Atlantic Integrated Freight (AIF)", "en": "AI Email Automation Consulting & Prototype for a Logistics Company — Atlantic Integrated Freight (AIF)" },
-          "meta": { "ko": "", "en": "" },
+          "period": {
+            "ko": "2025 ~ 2026",
+            "en": "2025 – 2026"
+          },
+          "title": {
+            "ko": "물류기업 AI 이메일 자동화 컨설팅 및 프로토타입 개발",
+            "en": "AI Email Automation Consulting & Prototype for a Logistics Company — Atlantic Integrated Freight (AIF)"
+          },
+          "meta": {
+            "ko": "AIF",
+            "en": ""
+          },
           "bullets": [
-            { "ko": "요구사항이 명확히 정의되지 않은 클라이언트를 대상으로 AI 도입 가능 범위를 진단하고, 방향성 자문부터 실제 동작하는 프로토타입 구현까지 수행", "en": "Assessed the feasible scope of AI adoption for a client without clearly defined requirements, and delivered everything from strategic advice to a working prototype" },
-            { "ko": "이메일 자동 분류·분석 시스템 구축 — GPT/sLLM 이중 서버, RAG 기반 파이프라인, React·Flask·PostgreSQL(pgvector)", "en": "Built an automated email classification and analysis system — dual GPT/sLLM servers, RAG-based pipeline, React · Flask · PostgreSQL (pgvector)" }
+            {
+              "ko": "요구사항이 명확히 정의되지 않은 클라이언트를 대상으로 AI 도입 가능 범위를 진단하고, 방향성 자문부터 실제 동작하는 프로토타입 구현까지 수행",
+              "en": "Assessed the feasible scope of AI adoption for a client without clearly defined requirements, and delivered everything from strategic advice to a working prototype"
+            },
+            {
+              "ko": "이메일 자동 분류·분석 시스템 구축 — GPT/sLLM 이중 서버, RAG 기반 파이프라인, React·Flask·PostgreSQL(pgvector)",
+              "en": "Built an automated email classification and analysis system — dual GPT/sLLM servers, RAG-based pipeline, React · Flask · PostgreSQL (pgvector)"
+            }
           ]
         },
         {
           "id": "p-nrf-sim",
-          "period": { "ko": "2025 ~ 2026", "en": "2025 – 2026" },
-          "title": { "ko": "AI 기반 몰입형 교육 시뮬레이션 저작 플랫폼 개발", "en": "AI-Powered Authoring Platform for Immersive Educational Simulations" },
-          "meta": { "ko": "한국연구재단(NRF)", "en": "National Research Foundation of Korea (NRF)" },
+          "period": {
+            "ko": "2025 ~ 2026",
+            "en": "2025 – 2026"
+          },
+          "title": {
+            "ko": "AI 기반 몰입형 교육 시뮬레이션 저작 플랫폼 개발",
+            "en": "AI-Powered Authoring Platform for Immersive Educational Simulations"
+          },
+          "meta": {
+            "ko": "한국연구재단(NRF)",
+            "en": "National Research Foundation of Korea (NRF)"
+          },
           "bullets": [
-            { "ko": "몰입형 교육 시뮬레이션을 제작하기 위한 AI 기반 저작 플랫폼 연구·개발 — 관련 논문 1편 게재 승인(accepted) 및 특허 1건 출원", "en": "Researched and developed an AI-based authoring platform for creating immersive educational simulations — 1 paper accepted and 1 patent filed" }
+            {
+              "ko": "몰입형 교육 시뮬레이션을 제작하기 위한 AI 기반 저작 플랫폼 연구·개발 — 관련 논문 1편 게재 승인(accepted) 및 특허 1건 출원",
+              "en": "Researched and developed an AI-based authoring platform for creating immersive educational simulations — 1 paper accepted and 1 patent filed"
+            }
           ]
         },
         {
           "id": "p-glotrading",
-          "period": { "ko": "2025", "en": "2025" },
-          "title": { "ko": "GloTrading — 자연어 기반 투자 실행 시스템", "en": "GloTrading — Natural-Language Investment Execution System" },
-          "meta": { "ko": "키움증권", "en": "Kiwoom Securities" },
+          "period": {
+            "ko": "2025",
+            "en": "2025"
+          },
+          "title": {
+            "ko": "GloTrading — 자연어 기반 투자 실행 시스템",
+            "en": "GloTrading — Natural-Language Investment Execution System"
+          },
+          "meta": {
+            "ko": "키움증권",
+            "en": "Kiwoom Securities"
+          },
           "bullets": [
-            { "ko": "자연어로 작성한 투자 계획을 키움증권 REST API 주문으로 매핑하는 LLM 기반 파이프라인 설계 — 모호하게 서술된 투자 전략도 실제 체결 가능한 주문으로 연결되도록 구현(말 그대로 '글로 하는 트레이딩')", "en": "Designed an LLM-based pipeline that maps investment plans written in natural language to Kiwoom Securities REST API orders, turning even loosely described strategies into executable orders (“Glo” is Korean for “by writing”)" }
+            {
+              "ko": "자연어로 작성한 투자 계획을 키움증권 REST API 주문으로 매핑하는 LLM 기반 파이프라인 설계 — 모호하게 서술된 투자 전략도 실제 체결 가능한 주문으로 연결되도록 구현(말 그대로 '글로 하는 트레이딩')",
+              "en": "Designed an LLM-based pipeline that maps investment plans written in natural language to Kiwoom Securities REST API orders, turning even loosely described strategies into executable orders (“Glo” is Korean for “by writing”)"
+            }
           ]
         },
         {
           "id": "p-propaganda",
-          "period": { "ko": "2024", "en": "2024" },
-          "title": { "ko": "프로파간다 탐지 (Propaganda Detection)", "en": "Propaganda Detection" },
-          "meta": { "ko": "Future Science Academy", "en": "Future Science Academy" },
+          "period": {
+            "ko": "2024",
+            "en": "2024"
+          },
+          "title": {
+            "ko": "프로파간다 탐지 (Propaganda Detection)",
+            "en": "Propaganda Detection"
+          },
+          "meta": {
+            "ko": "Future Science Academy",
+            "en": "Future Science Academy"
+          },
           "bullets": []
         },
         {
           "id": "p-news",
-          "period": { "ko": "2023", "en": "2023" },
-          "title": { "ko": "LLM 기반 뉴스 기사 분석 (News Article Analysis with LLMs)", "en": "News Article Analysis with LLMs" },
-          "meta": { "ko": "Future Science Academy", "en": "Future Science Academy" },
+          "period": {
+            "ko": "2023",
+            "en": "2023"
+          },
+          "title": {
+            "ko": "LLM 기반 뉴스 기사 분석 (News Article Analysis with LLMs)",
+            "en": "News Article Analysis with LLMs"
+          },
+          "meta": {
+            "ko": "Future Science Academy",
+            "en": "Future Science Academy"
+          },
           "bullets": []
         },
         {
           "id": "p-cohort",
-          "period": { "ko": "2021", "en": "2021" },
-          "title": { "ko": "도시 코호트 기반 식이·생활습관·환경 요인과 암 위험도 연관성 연구", "en": "Dietary, Lifestyle, and Environmental Factors and Cancer Risk in an Urban Cohort" },
-          "meta": { "ko": "서울대학교병원, 한국인유전체역학조사사업", "en": "Seoul National University Hospital; Korean Genome and Epidemiology Study (KoGES)" },
+          "period": {
+            "ko": "2021",
+            "en": "2021"
+          },
+          "title": {
+            "ko": "도시 코호트 기반 식이·생활습관·환경 요인과 암 위험도 연관성 연구",
+            "en": "Dietary, Lifestyle, and Environmental Factors and Cancer Risk in an Urban Cohort"
+          },
+          "meta": {
+            "ko": "서울대학교병원, 한국인유전체역학조사사업",
+            "en": "Seoul National University Hospital; Korean Genome and Epidemiology Study (KoGES)"
+          },
           "bullets": [
-            { "ko": "생존분석(Survival Analysis)을 적용해 식이·생활습관·환경 요인과 암 발생 위험도 간 연관성 분석", "en": "Applied survival analysis to examine how dietary, lifestyle, and environmental factors relate to cancer incidence risk" }
+            {
+              "ko": "생존분석(Survival Analysis)을 적용해 식이·생활습관·환경 요인과 암 발생 위험도 간 연관성 분석",
+              "en": "Applied survival analysis to examine how dietary, lifestyle, and environmental factors relate to cancer incidence risk"
+            }
           ]
         },
         {
           "id": "p-arrhythmia-trial",
-          "period": { "ko": "2020", "en": "2020" },
-          "title": { "ko": "AI 기반 부정맥 탐지 알고리즘·대응 서비스 수용성 임상연구", "en": "Clinical Study on the Acceptability of an AI-Based Arrhythmia Detection Algorithm and Response Service" },
-          "meta": { "ko": "서울대학교병원", "en": "Seoul National University Hospital" },
+          "period": {
+            "ko": "2020",
+            "en": "2020"
+          },
+          "title": {
+            "ko": "AI 기반 부정맥 탐지 알고리즘·대응 서비스 수용성 임상연구",
+            "en": "Clinical Study on the Acceptability of an AI-Based Arrhythmia Detection Algorithm and Response Service"
+          },
+          "meta": {
+            "ko": "서울대학교병원",
+            "en": "Seoul National University Hospital"
+          },
           "bullets": []
         },
         {
           "id": "p-ecg",
-          "period": { "ko": "2019", "en": "2019" },
-          "title": { "ko": "ECG 데이터 기반 부정맥 진단 알고리즘 모델 공동 개발", "en": "Co-development of an ECG-Based Arrhythmia Diagnosis Model" },
-          "meta": { "ko": "서울대학교병원", "en": "Seoul National University Hospital" },
+          "period": {
+            "ko": "2019",
+            "en": "2019"
+          },
+          "title": {
+            "ko": "ECG 데이터 기반 부정맥 진단 알고리즘 모델 공동 개발",
+            "en": "Co-development of an ECG-Based Arrhythmia Diagnosis Model"
+          },
+          "meta": {
+            "ko": "서울대학교병원",
+            "en": "Seoul National University Hospital"
+          },
           "bullets": [
-            { "ko": "ECG 신호 처리(Signal Processing) 기반 부정맥 진단 알고리즘 모델 개발", "en": "Developed an arrhythmia diagnosis model based on ECG signal processing" }
+            {
+              "ko": "ECG 신호 처리(Signal Processing) 기반 부정맥 진단 알고리즘 모델 개발",
+              "en": "Developed an arrhythmia diagnosis model based on ECG signal processing"
+            }
           ]
         },
         {
           "id": "p-isp",
-          "period": { "ko": "2019 ~ 2020", "en": "2019 – 2020" },
-          "title": { "ko": "학생성공 데이터 분석 플랫폼 정보화전략계획(ISP) 및 데이터 분석 모델링 컨설팅", "en": "Information Strategy Planning (ISP) and Data Modeling Consulting for a Student Success Analytics Platform" },
-          "meta": { "ko": "경복대학교, 한국연구재단", "en": "Kyungbok University; National Research Foundation of Korea" },
+          "period": {
+            "ko": "2019 ~ 2020",
+            "en": "2019 – 2020"
+          },
+          "title": {
+            "ko": "학생성공 데이터 분석 플랫폼 정보화전략계획(ISP) 및 데이터 분석 모델링 컨설팅",
+            "en": "Information Strategy Planning (ISP) and Data Modeling Consulting for a Student Success Analytics Platform"
+          },
+          "meta": {
+            "ko": "경복대학교, 한국연구재단",
+            "en": "Kyungbok University; National Research Foundation of Korea"
+          },
           "bullets": [
-            { "ko": "부트스트랩·배깅 등 머신러닝 앙상블 기법을 활용해 학생의 취업·제적 등 성과 예측 모델 구축", "en": "Built models predicting student outcomes such as employment and dismissal using ensemble methods (bootstrapping, bagging)" }
+            {
+              "ko": "부트스트랩·배깅 등 머신러닝 앙상블 기법을 활용해 학생의 취업·제적 등 성과 예측 모델 구축",
+              "en": "Built models predicting student outcomes such as employment and dismissal using ensemble methods (bootstrapping, bagging)"
+            }
           ]
         },
         {
           "id": "p-lg",
-          "period": { "ko": "2019", "en": "2019" },
-          "title": { "ko": "뷰티 스마트 카메라 PoC(Proof of Concept)", "en": "Beauty Smart Camera Proof of Concept" },
-          "meta": { "ko": "LG전자", "en": "LG Electronics" },
+          "period": {
+            "ko": "2019",
+            "en": "2019"
+          },
+          "title": {
+            "ko": "뷰티 스마트 카메라 PoC(Proof of Concept)",
+            "en": "Beauty Smart Camera Proof of Concept"
+          },
+          "meta": {
+            "ko": "LG전자",
+            "en": "LG Electronics"
+          },
           "bullets": [
-            { "ko": "컴퓨터 비전 기반 PoC — YOLOv3 객체 탐지 모델 활용", "en": "Computer-vision PoC built on the YOLOv3 object detection model" }
+            {
+              "ko": "컴퓨터 비전 기반 PoC — YOLOv3 객체 탐지 모델 활용",
+              "en": "Computer-vision PoC built on the YOLOv3 object detection model"
+            }
           ]
         },
         {
           "id": "p-robot-journalism",
-          "period": { "ko": "2019", "en": "2019" },
-          "title": { "ko": "로봇 저널리즘 기반 방송 뉴스 콘텐츠 제작", "en": "Broadcast News Content Production with Robot Journalism" },
-          "meta": { "ko": "언론진흥재단, 과학기술정보통신부", "en": "Korea Press Foundation; Ministry of Science and ICT" },
+          "period": {
+            "ko": "2019",
+            "en": "2019"
+          },
+          "title": {
+            "ko": "로봇 저널리즘 기반 방송 뉴스 콘텐츠 제작",
+            "en": "Broadcast News Content Production with Robot Journalism"
+          },
+          "meta": {
+            "ko": "언론진흥재단, 과학기술정보통신부",
+            "en": "Korea Press Foundation; Ministry of Science and ICT"
+          },
           "bullets": []
         },
         {
           "id": "p-hci-intern",
-          "period": { "ko": "2018.08 ~ 2018.10", "en": "2018.08 – 2018.10" },
-          "title": { "ko": "서울대학교 컴퓨터공학부 HCI Lab 인턴", "en": "Research Intern, HCI Lab, Dept. of Computer Science and Engineering" },
-          "meta": { "ko": "Seoul National University", "en": "Seoul National University" },
+          "period": {
+            "ko": "2018.08 ~ 2018.10",
+            "en": "2018.08 – 2018.10"
+          },
+          "title": {
+            "ko": "서울대학교 컴퓨터공학부 HCI Lab 인턴",
+            "en": "Research Intern, HCI Lab, Dept. of Computer Science and Engineering"
+          },
+          "meta": {
+            "ko": "Seoul National University",
+            "en": "Seoul National University"
+          },
           "bullets": []
         }
       ]
     },
     "pubs": {
       "type": "pubs",
-      "title": { "ko": "주요 논문", "en": "Selected Publications" },
+      "title": {
+        "ko": "주요 논문",
+        "en": "Selected Publications"
+      },
       "items": [
         {
           "id": "pub-debsim",
@@ -283,122 +560,248 @@
           "year": "2016",
           "title": "Drag and Roll: Gesture Interaction for Fine-tuning Task on Touchscreen",
           "authors": "Kieun Park, Yongjae Yoo, Seungmoon Choi",
-          "venue": { "ko": "한국컴퓨터정보학회 학술대회", "en": "Korean Society of Computer and Information Conference" },
+          "venue": {
+            "ko": "한국컴퓨터정보학회 학술대회",
+            "en": "Korean Society of Computer and Information Conference"
+          },
           "note": ""
         }
       ]
     },
     "awards": {
       "type": "entries",
-      "title": { "ko": "수상 및 장학", "en": "Awards & Honors" },
+      "title": {
+        "ko": "수상 및 장학",
+        "en": "Awards & Honors"
+      },
       "items": [
         {
           "id": "a-its",
-          "period": { "ko": "2026", "en": "2026" },
-          "title": { "ko": "Best Full Paper Award — ITS '26 (DEBSIM)", "en": "Best Full Paper Award — ITS '26 (DEBSIM)" },
-          "meta": { "ko": "", "en": "" },
+          "period": {
+            "ko": "2026",
+            "en": "2026"
+          },
+          "title": {
+            "ko": "Best Full Paper Award — ITS '26 (DEBSIM)",
+            "en": "Best Full Paper Award — ITS '26 (DEBSIM)"
+          },
+          "meta": {
+            "ko": "",
+            "en": ""
+          },
           "bullets": []
         },
         {
           "id": "a-grant",
-          "period": { "ko": "2025 ~ 2026", "en": "2025 – 2026" },
-          "title": { "ko": "박사과정생 연구장려금 (Ph.D. Candidate Research Grant)", "en": "Ph.D. Candidate Research Grant" },
-          "meta": { "ko": "정부 지원 — 'AI 기반 몰입형 교육 시뮬레이션 저작 플랫폼 개발'", "en": "Government-funded — “Development of an AI-Powered Authoring Platform for Immersive Educational Simulations”" },
+          "period": {
+            "ko": "2025 ~ 2026",
+            "en": "2025 – 2026"
+          },
+          "title": {
+            "ko": "박사과정생 연구장려금 (Ph.D. Candidate Research Grant)",
+            "en": "Ph.D. Candidate Research Grant"
+          },
+          "meta": {
+            "ko": "정부 지원 — 'AI 기반 몰입형 교육 시뮬레이션 저작 플랫폼 개발'",
+            "en": "Government-funded — “Development of an AI-Powered Authoring Platform for Immersive Educational Simulations”"
+          },
           "bullets": []
         },
         {
           "id": "a-bk21",
-          "period": { "ko": "2019 ~ 2024", "en": "2019 – 2024" },
-          "title": { "ko": "두뇌한국 21 플러스 (BK21+) 장학금", "en": "Brain Korea 21 Plus (BK21+) Scholarship" },
-          "meta": { "ko": "정부 장학금 — 연구 성과 기반", "en": "Government scholarship — based on research performance" },
+          "period": {
+            "ko": "2019 ~ 2024",
+            "en": "2019 – 2024"
+          },
+          "title": {
+            "ko": "두뇌한국 21 플러스 (BK21+) 장학금",
+            "en": "Brain Korea 21 Plus (BK21+) Scholarship"
+          },
+          "meta": {
+            "ko": "정부 장학금 — 연구 성과 기반",
+            "en": "Government scholarship — based on research performance"
+          },
           "bullets": []
         },
         {
           "id": "a-skh",
-          "period": { "ko": "2016", "en": "2016" },
-          "title": { "ko": "SK 하이닉스 장학금", "en": "SK hynix Scholarship" },
-          "meta": { "ko": "학업 우수 장학", "en": "Scholarship for academic excellence" },
+          "period": {
+            "ko": "2016",
+            "en": "2016"
+          },
+          "title": {
+            "ko": "SK 하이닉스 장학금",
+            "en": "SK hynix Scholarship"
+          },
+          "meta": {
+            "ko": "학업 우수 장학",
+            "en": "Scholarship for academic excellence"
+          },
           "bullets": []
         },
         {
           "id": "a-national",
-          "period": { "ko": "2011 ~ 2013", "en": "2011 – 2013" },
-          "title": { "ko": "국가과학기술장학금", "en": "National Science & Technology Scholarship" },
-          "meta": { "ko": "정부 장학금 — 학업 우수", "en": "Government scholarship — academic excellence" },
+          "period": {
+            "ko": "2011 ~ 2013",
+            "en": "2011 – 2013"
+          },
+          "title": {
+            "ko": "국가과학기술장학금",
+            "en": "National Science & Technology Scholarship"
+          },
+          "meta": {
+            "ko": "정부 장학금 — 학업 우수",
+            "en": "Government scholarship — academic excellence"
+          },
           "bullets": []
         }
       ]
     },
     "skills": {
       "type": "list",
-      "title": { "ko": "기술 역량", "en": "Skills" },
+      "title": {
+        "ko": "기술 역량",
+        "en": "Skills"
+      },
       "items": [
         {
           "id": "s-e2e",
-          "label": { "ko": "End-to-End AI 솔루션 개발", "en": "End-to-End AI Solutions" },
-          "text": { "ko": "요구 정의·실현가능성 진단부터 프로토타입·실배포까지 사용자 주도권을 높이는 인터랙티브 AI 시스템 설계·구현", "en": "Designing and building interactive AI systems that strengthen user agency, from requirements and feasibility assessment to prototyping and production deployment" }
+          "label": {
+            "ko": "End-to-End AI 솔루션 개발",
+            "en": "End-to-End AI Solutions"
+          },
+          "text": {
+            "ko": "요구 정의·실현가능성 진단부터 프로토타입·실배포까지 사용자 주도권을 높이는 인터랙티브 AI 시스템 설계·구현",
+            "en": "Designing and building interactive AI systems that strengthen user agency, from requirements and feasibility assessment to prototyping and production deployment"
+          }
         },
         {
           "id": "s-llm",
-          "label": { "ko": "LLM · 에이전트 엔지니어링", "en": "LLM & Agent Engineering" },
-          "text": { "ko": "LangChain · LangGraph 기반 AI 에이전트 오케스트레이션(멀티 에이전트, 라우팅·시나리오 분기), 프롬프트 엔지니어링 및 LLM 출력 정확도 개선", "en": "AI agent orchestration with LangChain and LangGraph (multi-agent, routing, scenario branching); prompt engineering and improving LLM output accuracy" }
+          "label": {
+            "ko": "LLM · 에이전트 엔지니어링",
+            "en": "LLM & Agent Engineering"
+          },
+          "text": {
+            "ko": "LangChain · LangGraph 기반 AI 에이전트 오케스트레이션(멀티 에이전트, 라우팅·시나리오 분기), 프롬프트 엔지니어링 및 LLM 출력 정확도 개선",
+            "en": "AI agent orchestration with LangChain and LangGraph (multi-agent, routing, scenario branching); prompt engineering and improving LLM output accuracy"
+          }
         },
         {
           "id": "s-rag",
-          "label": { "ko": "RAG · LLM 서빙", "en": "RAG & LLM Serving" },
-          "text": { "ko": "RAG(검색증강생성) 파이프라인 구축, 벡터 DB(pgvector), vLLM 기반 자체 호스팅 sLLM 운영, OpenAI GPT API 연동", "en": "RAG (retrieval-augmented generation) pipelines, vector DB (pgvector), self-hosted sLLM serving with vLLM, OpenAI GPT API integration" }
+          "label": {
+            "ko": "RAG · LLM 서빙",
+            "en": "RAG & LLM Serving"
+          },
+          "text": {
+            "ko": "RAG(검색증강생성) 파이프라인 구축, 벡터 DB(pgvector), vLLM 기반 자체 호스팅 sLLM 운영, OpenAI GPT API 연동",
+            "en": "RAG (retrieval-augmented generation) pipelines, vector DB (pgvector), self-hosted sLLM serving with vLLM, OpenAI GPT API integration"
+          }
         },
         {
           "id": "s-ml",
-          "label": { "ko": "머신러닝 · NLP", "en": "Machine Learning & NLP" },
-          "text": { "ko": "자연어처리(NLP), Hugging Face Transformers 기반 모델 파인튜닝, PyTorch · TensorFlow, 생존분석(DeepSurv), 앙상블 기법(부트스트랩·배깅)", "en": "Natural language processing, model fine-tuning with Hugging Face Transformers, PyTorch, TensorFlow, survival analysis (DeepSurv), ensemble methods (bootstrapping, bagging)" }
+          "label": {
+            "ko": "머신러닝 · NLP",
+            "en": "Machine Learning & NLP"
+          },
+          "text": {
+            "ko": "자연어처리(NLP), Hugging Face Transformers 기반 모델 파인튜닝, PyTorch · TensorFlow, 생존분석(DeepSurv), 앙상블 기법(부트스트랩·배깅)",
+            "en": "Natural language processing, model fine-tuning with Hugging Face Transformers, PyTorch, TensorFlow, survival analysis (DeepSurv), ensemble methods (bootstrapping, bagging)"
+          }
         },
         {
           "id": "s-data",
-          "label": { "ko": "데이터 분석", "en": "Data Analysis" },
+          "label": {
+            "ko": "데이터 분석",
+            "en": "Data Analysis"
+          },
           "text": "PySpark, Hadoop, SQL, pandas, scikit-learn"
         },
         {
           "id": "s-sw",
-          "label": { "ko": "소프트웨어 · 인프라", "en": "Software & Infrastructure" },
-          "text": { "ko": "React, Flask, PostgreSQL(pgvector), Streamlit, Linux 서버 운영(AWS EC2)", "en": "React, Flask, PostgreSQL (pgvector), Streamlit, Linux server operations (AWS EC2)" }
+          "label": {
+            "ko": "소프트웨어 · 인프라",
+            "en": "Software & Infrastructure"
+          },
+          "text": {
+            "ko": "React, Flask, PostgreSQL(pgvector), Streamlit, Linux 서버 운영(AWS EC2)",
+            "en": "React, Flask, PostgreSQL (pgvector), Streamlit, Linux server operations (AWS EC2)"
+          }
         },
         {
           "id": "s-lang",
-          "label": { "ko": "프로그래밍 언어", "en": "Programming Languages" },
-          "text": { "ko": "Python(상급), C(펌웨어 개발 실무 경험)", "en": "Python (advanced), C (professional firmware development)" }
+          "label": {
+            "ko": "프로그래밍 언어",
+            "en": "Programming Languages"
+          },
+          "text": {
+            "ko": "Python(상급), C(펌웨어 개발 실무 경험)",
+            "en": "Python (advanced), C (professional firmware development)"
+          }
         }
       ]
     },
     "work": {
       "type": "entries",
-      "title": { "ko": "산업 경력", "en": "Work Experience" },
+      "title": {
+        "ko": "산업 경력",
+        "en": "Work Experience"
+      },
       "items": [
         {
           "id": "w-skh",
-          "period": { "ko": "2016.01 ~ 2018.08", "en": "2016.01 – 2018.08" },
-          "title": { "ko": "SK 하이닉스 — 펌웨어 개발자 (Mobile FW / UFS 팀)", "en": "SK hynix — Firmware Engineer (Mobile FW / UFS Team)" },
-          "meta": { "ko": "담당 제품: Armstrong, Voyager  |  사용 기술: C, Python  |  경기", "en": "Products: Armstrong, Voyager  |  Tech: C, Python  |  Gyeonggi, Korea" },
+          "period": {
+            "ko": "2016.01 ~ 2018.08",
+            "en": "2016.01 – 2018.08"
+          },
+          "title": {
+            "ko": "SK 하이닉스 — 펌웨어 개발자 (Mobile FW / UFS 팀)",
+            "en": "SK hynix — Firmware Engineer (Mobile FW / UFS Team)"
+          },
+          "meta": {
+            "ko": "담당 제품: Armstrong, Voyager  |  사용 기술: C, Python  |  경기",
+            "en": "Products: Armstrong, Voyager  |  Tech: C, Python  |  Gyeonggi, Korea"
+          },
           "bullets": []
         }
       ]
     },
     "patents": {
       "type": "entries",
-      "title": { "ko": "특허", "en": "Patents" },
+      "title": {
+        "ko": "특허",
+        "en": "Patents"
+      },
       "items": [
         {
           "id": "pt-history",
-          "period": { "ko": "2025.04", "en": "2025.04" },
-          "title": { "ko": "인공지능 기반 역사 교육 장치 및 방법", "en": "Apparatus and Method for AI-Based History Education" },
-          "meta": { "ko": "특허출원 10-2025-0052156  |  출원일 2025.04.22  |  대한민국", "en": "Korean Patent Application No. 10-2025-0052156  |  Filed 2025.04.22" },
+          "period": {
+            "ko": "2025.04",
+            "en": "2025.04"
+          },
+          "title": {
+            "ko": "인공지능 기반 역사 교육 장치 및 방법",
+            "en": "Apparatus and Method for AI-Based History Education"
+          },
+          "meta": {
+            "ko": "특허출원 10-2025-0052156  |  출원일 2025.04.22  |  대한민국",
+            "en": "Korean Patent Application No. 10-2025-0052156  |  Filed 2025.04.22"
+          },
           "bullets": []
         },
         {
           "id": "pt-highlight",
-          "period": { "ko": "2025.06", "en": "2025.06" },
-          "title": { "ko": "하이라이트 영상 제공 장치 및 방법", "en": "Apparatus and Method for Providing Highlight Videos" },
-          "meta": { "ko": "등록특허 10-2829091  |  등록일 2025.06.30 (출원번호 10-2024-0092040, 출원일 2024.07.11)  |  대한민국", "en": "Korean Patent No. 10-2829091  |  Registered 2025.06.30 (Application No. 10-2024-0092040, filed 2024.07.11)" },
+          "period": {
+            "ko": "2025.06",
+            "en": "2025.06"
+          },
+          "title": {
+            "ko": "하이라이트 영상 제공 장치 및 방법",
+            "en": "Apparatus and Method for Providing Highlight Videos"
+          },
+          "meta": {
+            "ko": "등록특허 10-2829091  |  등록일 2025.06.30 (출원번호 10-2024-0092040, 출원일 2024.07.11)  |  대한민국",
+            "en": "Korean Patent No. 10-2829091  |  Registered 2025.06.30 (Application No. 10-2024-0092040, filed 2024.07.11)"
+          },
           "bullets": []
         }
       ]
