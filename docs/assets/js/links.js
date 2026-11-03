@@ -1,18 +1,24 @@
-// Owner-only list of the unlisted pages in docs/s/.
-// "Sign in" (footer) takes a GitHub token, the same one the CV editor uses, and
-// fetches the list from the GitHub API, so the list never ships in the page.
+// Owner sign-in and the list of unlisted pages in docs/s/.
+// Home page: the footer's "Sign in" link becomes "Shared links" plus "Sign out"
+// once you're signed in. links/: takes a GitHub token, the same one the CV
+// editor uses, and fetches the list from the GitHub API, so the list never
+// ships in the page.
 
 const REPO = { owner: "kiana-park", repo: "kiana-park.github.io", branch: "main", dir: "docs/s" };
 const SITE = "https://kiana-park.github.io";
 const TOKEN_KEY = "gh:token";       // shared with docs/s/s4htpheix3 (CV editor)
 const OLD_TOKEN_KEYS = ["cv:token"];
 
-const panel = document.getElementById("links");
+// Footer, on both pages
+const ownerLink = document.getElementById("owner-link");   // home page only
+const signoutButton = document.getElementById("signout");
+
+// links/ only
+const heading = document.getElementById("links-title");
 const list = document.getElementById("links-list");
 const count = document.getElementById("links-count");
 const note = document.getElementById("links-status");
-const signinButton = document.getElementById("signin");
-const dialog = document.getElementById("signin-dialog");
+const refreshButton = document.getElementById("links-refresh");
 const form = document.getElementById("signin-form");
 const tokenInput = document.getElementById("signin-token");
 const rememberInput = document.getElementById("signin-remember");
@@ -105,7 +111,6 @@ function row(page) {
 }
 
 async function loadLinks() {
-  panel.hidden = false;
   list.replaceChildren();
   count.textContent = "";
   note.textContent = "Loading…";
@@ -125,55 +130,60 @@ async function loadLinks() {
 }
 
 function render() {
-  signinButton.textContent = token ? "Sign out" : "Sign in";
+  signoutButton.hidden = !token;
+  if (ownerLink) ownerLink.textContent = token ? "Shared links" : "Sign in";
+  if (!form) return;
+
+  form.hidden = Boolean(token);
+  refreshButton.hidden = !token;
   if (!token) {
-    panel.hidden = true;
     list.replaceChildren();
+    count.textContent = "";
+    note.hidden = true;
   }
 }
 
-function openDialog(message = "") {
-  errorText.textContent = message;
-  tokenInput.value = "";
-  dialog.showModal();
-  tokenInput.focus();
-}
-
-function signOut(message) {
+function signOut(message = "") {
   for (const store of [localStorage, sessionStorage]) {
     store.removeItem(TOKEN_KEY);
     OLD_TOKEN_KEYS.forEach((key) => store.removeItem(key));
   }
   token = null;
   render();
-  if (message) openDialog(message);
+  if (form) {
+    errorText.textContent = message;
+    tokenInput.value = "";
+    tokenInput.focus();
+  }
 }
 
-signinButton.addEventListener("click", () => (token ? signOut() : openDialog()));
-document.getElementById("signin-cancel").addEventListener("click", () => dialog.close());
-document.getElementById("links-refresh").addEventListener("click", loadLinks);
+signoutButton.addEventListener("click", () => signOut());
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const candidate = tokenInput.value.trim();
-  const submit = form.querySelector('[type="submit"]');
-  submit.disabled = true;
-  errorText.textContent = "";
-  try {
-    const repo = await gh(`/repos/${REPO.owner}/${REPO.repo}`, { auth: candidate });
-    if (!repo.permissions?.push) throw new Error("This token's account can't write to " + REPO.repo + ".");
-    (rememberInput.checked ? localStorage : sessionStorage).setItem(TOKEN_KEY, candidate);
-    token = candidate;
-    dialog.close();
-    render();
-    loadLinks();
-    panel.scrollIntoView({ block: "start" });
-  } catch (error) {
-    errorText.textContent = error.status === 401 ? "That token isn't valid." : error.message;
-  } finally {
-    submit.disabled = false;
-  }
-});
+if (form) {
+  refreshButton.addEventListener("click", loadLinks);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const candidate = tokenInput.value.trim();
+    const submit = form.querySelector('[type="submit"]');
+    submit.disabled = true;
+    errorText.textContent = "";
+    try {
+      const repo = await gh(`/repos/${REPO.owner}/${REPO.repo}`, { auth: candidate });
+      if (!repo.permissions?.push) throw new Error("This token's account can't write to " + REPO.repo + ".");
+      (rememberInput.checked ? localStorage : sessionStorage).setItem(TOKEN_KEY, candidate);
+      token = candidate;
+      tokenInput.value = "";
+      render();
+      heading.focus();
+      loadLinks();
+    } catch (error) {
+      errorText.textContent = error.status === 401 ? "That token isn't valid." : error.message;
+    } finally {
+      submit.disabled = false;
+    }
+  });
+}
 
 render();
-if (token) loadLinks();
+if (form && token) loadLinks();

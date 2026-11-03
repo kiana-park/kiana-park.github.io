@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shared links · Kiana Park</title>
+  <meta name="robots" content="noindex">
+
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
+
+  <link rel="icon" href="../favicon.ico" sizes="32x32">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400&display=swap">
+
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/links.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header container">
+    <a class="site-name" href="../">Kiana Park</a>
+    <nav aria-label="Main">
+      <ul class="nav" role="list">
+        <li><a href="../#about">About</a></li>
+        <li><a href="../#projects">Projects</a></li>
+        <li><a href="../#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Owner only: assets/js/links.js shows the sign-in form or, once signed in,
+       fills the list of unlisted pages in docs/s/ from the GitHub API -->
+  <main id="main" class="container">
+    <section class="card card--links" aria-labelledby="links-title">
+      <div class="links__head">
+        <h1 id="links-title" class="label" tabindex="-1">Shared links <span id="links-count" class="links__count"></span></h1>
+        <button id="links-refresh" class="button button--sm links__refresh" type="button" hidden>Refresh</button>
+      </div>
+
+      <form id="signin-form" class="signin-form" hidden>
+        <p>Sign in to see the pages you share by link. Use a GitHub token that can write to this site&rsquo;s repository; the CV editor uses the same sign-in.</p>
+        <ol>
+          <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create a fine-grained token</a></li>
+          <li>Repository access: only <code>kiana-park.github.io</code></li>
+          <li>Permissions: <strong>Contents</strong>, read and write</li>
+        </ol>
+        <label class="visually-hidden" for="signin-token">GitHub token</label>
+        <div class="signin-form__row">
+          <input id="signin-token" class="signin-form__input" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false" required>
+          <button class="button button--solid" type="submit">Sign in</button>
+        </div>
+        <label class="signin-form__check"><input id="signin-remember" type="checkbox" checked> Keep me signed in on this browser</label>
+        <p id="signin-error" class="signin-form__error" role="alert"></p>
+      </form>
+
+      <p id="links-status" class="links__status" role="status" hidden></p>
+      <ul id="links-list" class="links" role="list"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer container">
+    <p>&copy; <span id="year">2026</span> Kiana Park</p>
+    <p class="owner">
+      <button id="signout" class="owner__link" type="button" hidden>Sign out</button>
+    </p>
+  </footer>
+</body>
+</html>
