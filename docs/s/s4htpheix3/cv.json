@@ -20,7 +20,7 @@
     },
     "sub": {
       "ko": "",
-      "en": "Advisor: Prof. Bongwon Suh"
+      "en": ""
     },
     "photo": "photo.jpg",
     "contacts": [
@@ -88,7 +88,7 @@
       "id": "v-wn4blm",
       "label": {
         "ko": "강사용",
-        "en": "Industry Copy"
+        "en": "Instructor"
       },
       "order": [
         "edu",
@@ -177,15 +177,15 @@
           "id": "i-kyx3gm",
           "period": {
             "ko": "2026 ~ 현재",
-            "en": ""
+            "en": "2026 – Present"
           },
           "title": {
             "ko": "천안형 글로벌인재 육성 사업",
-            "en": ""
+            "en": "Cheonan Global Talent Development Program"
           },
           "meta": {
             "ko": "메인 강사 — AX 역량 빌드업 (기초/실무 전과정) : AI, 바이브코딩, 업무자동화 등",
-            "en": ""
+            "en": "Lead Instructor — AX Capability Build-up (all basic and practical courses): AI, vibe coding, work automation, and more"
           },
           "bullets": []
         },
@@ -193,15 +193,15 @@
           "id": "i-4wtyl2",
           "period": {
             "ko": "2026 ~ 현재",
-            "en": ""
+            "en": "2026 – Present"
           },
           "title": {
             "ko": "로컬크리에이터 지원사업 『아산 로컬 엔 청년』 (AX 기반 엑설러레이팅 프로그램)",
-            "en": ""
+            "en": "“Asan Local & Youth” Local Creator Support Program (AX-Based Accelerator Program)"
           },
           "meta": {
             "ko": "총괄 메인 강사, 멘토링 — 바이브코딩부터 배포까지",
-            "en": ""
+            "en": "Head Instructor & Mentor — from vibe coding to deployment"
           },
           "bullets": []
         },
@@ -279,6 +279,31 @@
       },
       "items": [
         {
+          "id": "p-etri",
+          "period": {
+            "ko": "2026 ~ 현재",
+            "en": "2026 – Present"
+          },
+          "title": {
+            "ko": "PII 유출 탐지 벤치마크 구축",
+            "en": "PII Leakage Detection Benchmark"
+          },
+          "meta": {
+            "ko": "한국전자통신연구원(ETRI)",
+            "en": "Electronics and Telecommunications Research Institute (ETRI)"
+          },
+          "bullets": [
+            {
+              "ko": "로컬 LLM을 파인튜닝할 때 학습 데이터의 개인정보(PII)가 모델에 실제로 학습(암기)되는지, 프롬프트를 통해 유출되는지를 검증·평가하는 방법론 조사 및 정리",
+              "en": "Surveying methods to verify and evaluate whether personal information (PII) in fine-tuning data is actually memorized by local LLMs and whether it leaks through prompts"
+            },
+            {
+              "ko": "PII 유출 유도 프롬프트 셋과 유출 탐지·평가 벤치마크 구축",
+              "en": "Building a set of PII-extraction prompts and a benchmark for detecting and evaluating leakage"
+            }
+          ]
+        },
+        {
           "id": "p-aif",
           "period": {
             "ko": "2025 ~ 2026",
@@ -286,11 +311,11 @@
           },
           "title": {
             "ko": "물류기업 AI 이메일 자동화 컨설팅 및 프로토타입 개발",
-            "en": "AI Email Automation Consulting & Prototype for a Logistics Company — Atlantic Integrated Freight (AIF)"
+            "en": "AI Email Automation Consulting & Prototype for a Logistics Company"
           },
           "meta": {
             "ko": "AIF",
-            "en": ""
+            "en": "Atlantic Integrated Freight (AIF)"
           },
           "bullets": [
             {
