@@ -37,6 +37,7 @@
 
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/links.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -53,6 +54,17 @@
   </header>
 
   <main id="main" class="container">
+    <!-- Owner only: filled in by assets/js/links.js after signing in -->
+    <section id="links" class="card card--links" aria-labelledby="links-title" hidden>
+      <div class="links__head">
+        <h2 id="links-title" class="label">Shared links <span id="links-count" class="links__count"></span></h2>
+        <span class="links__hint">Only shown while you&rsquo;re signed in</span>
+        <button id="links-refresh" class="button button--sm links__refresh" type="button">Refresh</button>
+      </div>
+      <p id="links-status" class="links__status" role="status"></p>
+      <ul id="links-list" class="links" role="list"></ul>
+    </section>
+
     <div class="bento">
 
       <div class="card card--intro">
@@ -119,6 +131,27 @@
 
   <footer class="site-footer container">
     <p>&copy; <span id="year">2026</span> Kiana Park</p>
+    <button id="signin" class="signin" type="button">Sign in</button>
   </footer>
+
+  <dialog id="signin-dialog" class="signin-dialog" aria-labelledby="signin-title">
+    <form id="signin-form">
+      <h2 id="signin-title">Sign in</h2>
+      <p>Use a GitHub token that can write to this site&rsquo;s repository. The CV editor uses the same sign-in.</p>
+      <ol>
+        <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create a fine-grained token</a></li>
+        <li>Repository access: only <code>kiana-park.github.io</code></li>
+        <li>Permissions: <strong>Contents</strong>, read and write</li>
+      </ol>
+      <label class="visually-hidden" for="signin-token">GitHub token</label>
+      <input id="signin-token" class="signin-dialog__input" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false" required>
+      <label class="signin-dialog__check"><input id="signin-remember" type="checkbox" checked> Keep me signed in on this browser</label>
+      <p id="signin-error" class="signin-dialog__error" role="alert"></p>
+      <div class="signin-dialog__actions">
+        <button id="signin-cancel" class="button" type="button">Cancel</button>
+        <button class="button button--solid" type="submit">Sign in</button>
+      </div>
+    </form>
+  </dialog>
 </body>
 </html>

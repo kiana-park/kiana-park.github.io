@@ -863,6 +863,245 @@ a {
   }
 }
 
+/* Buttons as <button> elements, plus size and fill variants */
+
+button.button {
+  background-color: transparent;
+  font-family: inherit;
+  line-height: 1.25rem;
+  cursor: pointer;
+}
+
+.button--sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.button--solid {
+  border-color: var(--text);
+  background-color: var(--text);
+  color: var(--surface);
+}
+
+button.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Shared links (owner only)
+   Hidden until you sign in from the footer; assets/js/links.js fills the list
+   from the GitHub API with the unlisted pages in docs/s/.
+   -------------------------------------------------------------------------- */
+
+.card--links {
+  gap: var(--space-2);
+  margin-bottom: var(--gap);
+}
+
+.card--links[hidden] {
+  display: none;
+}
+
+.links__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.links__count:not(:empty)::before {
+  content: "· ";
+}
+
+.links__hint {
+  color: var(--text-3);
+  font-size: var(--text-sm);
+}
+
+.links__refresh {
+  margin-left: auto;
+}
+
+.links__status {
+  color: var(--text-3);
+  font-size: var(--text-sm);
+}
+
+.links__status[hidden] {
+  display: none;
+}
+
+.link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-4);
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.link:first-child {
+  border-top: 0;
+}
+
+.link__title {
+  font-weight: 500;
+  word-break: keep-all;          /* keep Korean words whole when titles wrap */
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+}
+
+/* Each part starts with its own "·"; the first one on every line hangs in a
+   clipped gutter, so wrapped lines never begin with a stray dot */
+.link__meta {
+  grid-column: 1;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -1.5em;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  clip-path: inset(0 0 0 1.5em);
+}
+
+.link__meta span::before {
+  content: "·";
+  display: inline-block;
+  width: 1.5em;
+  text-align: center;
+}
+
+.link__copy {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-width: 5.75rem;
+  justify-content: center;
+}
+
+/* Footer sign-in */
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.signin {
+  margin: calc(-1 * var(--space-1));
+  padding: var(--space-1);
+  border: 0;
+  border-radius: var(--space-1);
+  background: none;
+  color: var(--text-3);
+  font: inherit;
+  cursor: pointer;
+  transition: color 0.15s var(--ease);
+}
+
+.signin-dialog {
+  width: min(26rem, 100% - 2 * var(--gutter));
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-hover);
+}
+
+.signin-dialog::backdrop {
+  background-color: rgb(9 9 11 / 0.45);
+}
+
+.signin-dialog h2 {
+  font-size: var(--text-md);
+}
+
+.signin-dialog p,
+.signin-dialog ol {
+  margin-top: var(--space-2);
+  color: var(--text-2);
+}
+
+.signin-dialog ol {
+  margin-bottom: var(--space-4);
+  padding-left: 1.25em;
+}
+
+.signin-dialog code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+.signin-dialog strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.signin-dialog__input {
+  width: 100%;
+  height: 2.25rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--sunken);
+  color: var(--text);
+  font: var(--text-sm) var(--font-mono);
+}
+
+.signin-dialog__check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  color: var(--text-2);
+  font-size: var(--text-sm);
+}
+
+.signin-dialog .signin-dialog__error {
+  min-height: 1.25rem;
+  color: #c2281d;
+  font-size: var(--text-sm);
+}
+
+.signin-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+@media (prefers-color-scheme: dark) {
+  .signin-dialog .signin-dialog__error {
+    color: #ff8a80;
+  }
+}
+
+@media (hover: hover) {
+  .signin:hover,
+  .link__title:hover {
+    color: var(--text);
+  }
+
+  .link__title:hover {
+    text-decoration: underline;
+  }
+
+  .button--solid:hover {
+    opacity: 0.86;
+  }
+}
+
 /* Larger screens
    -------------------------------------------------------------------------- */
 

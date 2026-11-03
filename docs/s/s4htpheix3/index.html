@@ -278,7 +278,8 @@ dialog .row{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
 'use strict';
 /* GitHub location of this page's data. Saving commits cv.json (and photo.jpg) here. */
 const CFG = { owner: 'kiana-park', repo: 'kiana-park.github.io', branch: 'main', dir: 'docs/s/s4htpheix3' };
-const KEY = { token: 'cv:token', draft: 'cv:draft:' + CFG.dir };
+// The token key is shared with the site's home page (assets/js/links.js): one sign-in covers both.
+const KEY = { token: 'gh:token', oldToken: 'cv:token', draft: 'cv:draft:' + CFG.dir };
 const SORTABLE = { src: 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js', sri: 'sha384-HZZ/fukV+9G8gwTNjN7zQDG0Sp7MsZy5DDN6VfY3Be7V9dvQpEpR2jF2HlyFUUjU' };
 const ACCENTS = ['#1f4fa3', '#213a63', '#0f6e66', '#6b3fa0', '#2b2f36'];
 
@@ -1001,10 +1002,19 @@ $('#loginForm').addEventListener('submit', async e => {
 });
 function logout(silent) {
   if (!silent && S.dirty && !confirm('저장하지 않은 수정 사항이 있어요. 이 브라우저에 임시 저장된 채로 로그아웃할까요?')) return;
-  localStorage.removeItem(KEY.token);
-  sessionStorage.removeItem(KEY.token);
+  forgetToken();
   S.token = null; S.edit = false; S.dirty = false; S.photo = null; S.hist = [];
   loadPublic().catch(() => {}).finally(render);
+}
+function readToken() {
+  for (const store of [localStorage, sessionStorage]) {
+    const t = store.getItem(KEY.token) || store.getItem(KEY.oldToken);
+    if (t) { store.setItem(KEY.token, t); store.removeItem(KEY.oldToken); return t; }
+  }
+  return null;
+}
+function forgetToken() {
+  for (const store of [localStorage, sessionStorage]) { store.removeItem(KEY.token); store.removeItem(KEY.oldToken); }
 }
 function restoreDraft() {
   let d;
@@ -1037,12 +1047,12 @@ function toast(msg, actionLabel, action) {
 (async function boot() {
   const [v, l] = decodeURIComponent(location.hash.slice(1)).split('/');
   if (l === 'ko' || l === 'en') S.lang = l;
-  S.token = localStorage.getItem(KEY.token) || sessionStorage.getItem(KEY.token);
+  S.token = readToken();
   try {
     if (S.token) {
       try { await loadRemote(); }
       catch (e) {
-        if (e.status === 401) { localStorage.removeItem(KEY.token); sessionStorage.removeItem(KEY.token); S.token = null; toast('로그인이 만료됐어요. 다시 로그인해 주세요.'); }
+        if (e.status === 401) { forgetToken(); S.token = null; toast('로그인이 만료됐어요. 다시 로그인해 주세요.'); }
         else toast('GitHub에서 불러오지 못해 공개본을 표시해요');
         await loadPublic();
       }
