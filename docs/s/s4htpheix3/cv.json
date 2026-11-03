@@ -97,9 +97,9 @@
         "skills",
         "research",
         "projects",
-        "patents",
         "pubs",
-        "awards"
+        "awards",
+        "patents"
       ],
       "hidden": []
     }
