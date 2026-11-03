@@ -54,12 +54,12 @@
       },
       "order": [
         "edu",
+        "pubs",
         "research",
         "teaching",
         "projects",
-        "pubs",
-        "awards",
         "skills",
+        "awards",
         "work",
         "patents"
       ],
