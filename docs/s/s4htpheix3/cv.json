@@ -72,11 +72,11 @@
         "en": "Industry"
       },
       "order": [
+        "edu",
         "research",
         "skills",
         "work",
         "projects",
-        "edu",
         "patents",
         "pubs",
         "awards",
