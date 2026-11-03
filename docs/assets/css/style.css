@@ -900,7 +900,8 @@ button.button:disabled {
 
 /* Shared links (owner only)
    The links/ page: a sign-in form until you sign in, then assets/js/links.js
-   fills the list from the GitHub API with the unlisted pages in docs/s/.
+   fills the list from the GitHub API with the unlisted pages in docs/s/,
+   grouped by project.
    -------------------------------------------------------------------------- */
 
 .card--links {
@@ -918,17 +919,139 @@ button.button:disabled {
   content: "· ";
 }
 
-.links__refresh {
+.links__tools {
+  display: flex;
+  gap: var(--space-2);
   margin-left: auto;
 }
 
-.links__refresh[hidden] {
+.links__tools[hidden] {
   display: none;
 }
 
+.links__hint,
 .links__status {
   color: var(--text-3);
   font-size: var(--text-sm);
+}
+
+/* A project: its name folds its pages away; a line on the left ties the
+   pages to it */
+.group + .group {
+  border-top: 1px solid var(--border);
+}
+
+.group__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding-block: var(--space-3);
+}
+
+.group__title {
+  min-width: 0;
+  font-size: inherit;
+}
+
+.group__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: calc(-1 * var(--space-1));
+  padding: var(--space-1);
+  border: 0;
+  border-radius: var(--space-1);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  word-break: keep-all;
+  cursor: pointer;
+}
+
+/* Points right when folded, down when open */
+.group__chevron {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--text-3);
+}
+
+.group__chevron::before {
+  content: "";
+  width: 0.375rem;
+  height: 0.375rem;
+  border-right: 1.5px solid;
+  border-bottom: 1.5px solid;
+  transform: translateX(-0.0625rem) rotate(-45deg);
+  transition: transform 0.2s var(--ease);
+}
+
+[aria-expanded="true"] > .group__chevron::before {
+  transform: translateY(-0.125rem) rotate(45deg);
+}
+
+.group__count,
+.group__date {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 400;
+}
+
+.group__date {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.group .links {
+  margin: 0 0 var(--space-3) calc(var(--space-2) - 1px);
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--border);
+}
+
+/* Organize: the project menu, a pill like the buttons beside it */
+.picker {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.picker::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-right: 1.5px solid;
+  border-bottom: 1.5px solid;
+  color: var(--text-2);
+  transform: translateY(-75%) rotate(45deg);
+  pointer-events: none;
+}
+
+.picker__select {
+  min-width: 9rem;
+  max-width: 100%;
+  padding: var(--space-1) calc(var(--space-6) + var(--space-1)) var(--space-1) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background-color: var(--surface);
+  color: var(--text);
+  font: 500 var(--text-xs) / 1.25rem var(--font-sans);
+  text-overflow: ellipsis;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease);
+}
+
+.picker__select:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 /* Phones: Open and Copy link sit below the title; 600px+: to its right */
@@ -1071,7 +1194,12 @@ button.button:disabled {
 }
 
 @media (hover: hover) {
+  .picker__select:hover:enabled {
+    border-color: var(--text);
+  }
+
   .owner__link:hover,
+  .group__toggle:hover .group__chevron,
   .link__title:hover {
     color: var(--text);
   }

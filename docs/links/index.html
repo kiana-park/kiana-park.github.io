@@ -37,13 +37,18 @@
   </header>
 
   <!-- Owner only: assets/js/links.js shows the sign-in form or, once signed in,
-       fills the list of unlisted pages in docs/s/ from the GitHub API -->
+       fills the list of unlisted pages in docs/s/ from the GitHub API, grouped
+       by the projects in shared-links.json at the repository root -->
   <main id="main" class="container">
     <section class="card card--links" aria-labelledby="links-title">
       <div class="links__head">
         <h1 id="links-title" class="label" tabindex="-1">Shared links <span id="links-count" class="links__count"></span></h1>
-        <button id="links-refresh" class="button button--sm links__refresh" type="button" hidden>Refresh</button>
+        <div id="links-tools" class="links__tools" hidden>
+          <button id="links-organize" class="button button--sm" type="button">Organize</button>
+          <button id="links-refresh" class="button button--sm" type="button">Refresh</button>
+        </div>
       </div>
+      <p id="links-hint" class="links__hint" hidden>Pick a project for each page. Each change is saved to the site&rsquo;s repository right away.</p>
 
       <form id="signin-form" class="signin-form" hidden>
         <p>Sign in to see the pages you share by link. Use a GitHub token that can write to this site&rsquo;s repository; the CV editor uses the same sign-in.</p>
@@ -62,7 +67,7 @@
       </form>
 
       <p id="links-status" class="links__status" role="status" hidden></p>
-      <ul id="links-list" class="links" role="list"></ul>
+      <div id="links-list"></div>
     </section>
   </main>
 
