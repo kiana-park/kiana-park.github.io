@@ -77,10 +77,10 @@
         "skills",
         "research",
         "projects",
-        "patents",
         "pubs",
-        "awards",
-        "teaching"
+        "teaching",
+        "patents",
+        "awards"
       ],
       "hidden": []
     },
