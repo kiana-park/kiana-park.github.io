@@ -148,8 +148,8 @@ svg{display:block;flex:none}
 .editing .is-hidden{opacity:.35}
 .editing .is-hidden:hover{opacity:.65}
 .editing .sec.is-hidden{opacity:1}
-.editing .sec.is-hidden>.items,.editing .sec.is-hidden>.add,.editing .sec.is-hidden .sec-t,.editing .sec.is-hidden .sec-sub{opacity:.35}
-.flag{display:none;margin-left:auto;padding:0 6px;border-radius:4px;background:#fef3c7;color:#92400e;font-size:10px;font-weight:600;letter-spacing:0;text-transform:none;line-height:1.6;white-space:nowrap}
+.editing .sec.is-hidden>.items,.editing .sec.is-hidden .sec-add,.editing .sec.is-hidden .sec-t,.editing .sec.is-hidden .sec-sub{opacity:.35}
+.flag{display:none;padding:0 6px;border-radius:4px;background:#fef3c7;color:#92400e;font-size:10px;font-weight:600;letter-spacing:0;text-transform:none;line-height:1.6;white-space:nowrap}
 .editing .is-hidden>.sec-h>.flag{display:inline-block}
 
 .grip{position:absolute;right:100%;top:0;display:grid;place-items:center;padding:1px 6px 1px 4px;color:#a3aab5;cursor:grab;opacity:0;transition:opacity .12s}
@@ -164,7 +164,9 @@ svg{display:block;flex:none}
 
 .add{display:inline-flex;align-items:center;gap:4px;margin-top:.6mm;padding:2px 9px;border:1px dashed #cdd3dc;border-radius:6px;background:none;color:#6b7280;font:500 11px/1.5 var(--font);cursor:pointer}
 .add:hover{border-color:var(--ui-blue);color:var(--ui-blue);background:#eff6ff}
-.theme-modern .sec>.add{margin-left:calc(var(--col) + var(--gap))}
+/* "항목 추가" sits at the right end of each section heading and adds to the top:
+   CVs list the most recent first */
+.sec-h>.sec-add{align-self:center;margin:-2px 0 -2px auto;padding:0 7px;font-size:10.5px;line-height:1.6;letter-spacing:0;text-transform:none}
 .addsec{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8mm;padding-top:4mm;border-top:1px dashed #dde1e7;color:#9aa1ac;font:500 11px/1.5 var(--font)}
 .drag-ghost{opacity:.4;background:#eff6ff}
 .photo-ctl{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:4px;padding:14px 4px 5px;background:linear-gradient(transparent,rgba(0,0,0,.55));opacity:0;transition:opacity .12s}
@@ -440,15 +442,17 @@ function renderSection(id) {
   const items = s.items.filter(it => S.edit || !isHidden(it.id));
   if (!S.edit && !items.length) return '';
   const sub = S.lang === 'ko' && S.data.settings.enSub ? ed('span', s, 'title', 'sec-sub', { lang: 'en', ph: 'English' }) : '';
+  const add = S.edit
+    ? `<button type="button" class="add sec-add" data-act="add-item" data-sec="${esc(id)}" title="이 섹션 맨 위에 새 항목을 추가해요">${I.plus} 항목 추가</button>`
+    : '';
   const ctl = S.edit
     ? `<span class="grip sec-grip" title="드래그해서 섹션 이동">${I.grip}</span>`
       + `<span class="flag">이 구성에서 숨김</span>`
       + `<span class="acts">${btn('sec-hide', { sec: id }, hid ? I.eyeOff : I.eye, hid ? '이 구성에서 보이기' : '이 구성에서 숨기기')}${btn('sec-del', { sec: id }, I.trash, '섹션 삭제', 'danger')}</span>`
     : '';
   return `<section class="sec t-${s.type}${hid ? ' is-hidden' : ''}" data-sec="${esc(id)}">
-    <h2 class="sec-h">${ed('span', s, 'title', 'sec-t', { ph: '섹션 제목' })}${sub}${ctl}</h2>
+    <h2 class="sec-h">${ed('span', s, 'title', 'sec-t', { ph: '섹션 제목' })}${sub}${add}${ctl}</h2>
     <div class="items" data-sec="${esc(id)}">${items.map(it => ITEM[s.type](it, id)).join('')}</div>
-    ${S.edit ? `<button type="button" class="add" data-act="add-item" data-sec="${esc(id)}">${I.plus} 항목 추가</button>` : ''}
   </section>`;
 }
 
@@ -655,7 +659,7 @@ const ACT = {
     const s = findSec(b.dataset.sec);
     snap();
     const it = newItem(s.type);
-    s.items.push(it);
+    s.items.unshift(it);
     changed();
     const box = $(`.item[data-id="${it.id}"]`, paper);
     focusEl($('.ttl', box) || $('.lab', box) || $('[data-ref]', box));
