@@ -1106,6 +1106,67 @@ button.button:disabled {
   justify-content: center;
 }
 
+/* Delete: a round trash button, then a sunken strip under the row that asks
+   once more */
+.link__delete {
+  justify-content: center;
+  width: calc(1.25rem + 2 * var(--space-1) + 2px);   /* as wide as it's tall */
+  padding: 0;
+  color: var(--text-2);
+}
+
+.link__delete svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.link__delete[aria-expanded="true"],
+.button.button--danger {
+  border-color: #c2281d;
+  background-color: #c2281d;
+  color: #fff;
+}
+
+.link__confirm {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--sunken);
+  font-size: var(--text-sm);
+}
+
+.link__confirm-text {
+  flex: 1 1 16rem;
+}
+
+.link__confirm-help {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--text-3);
+  font-size: var(--text-xs);
+}
+
+.link__confirm-buttons {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.link__confirm-error {
+  flex-basis: 100%;
+  color: #c2281d;
+}
+
+.link__confirm-error:empty {
+  display: none;
+}
+
 /* Upload: a sunken panel above the list with the file and the choices made
    before publishing it, then the new link (assets/js/upload.js) */
 /* Drop a file anywhere on the page */
@@ -1427,7 +1488,8 @@ body.editor {
 
 @media (prefers-color-scheme: dark) {
   .signin-form__error,
-  .upload__status {
+  .upload__status,
+  .link__confirm-error {
     color: #ff8a80;
   }
 
@@ -1452,8 +1514,15 @@ body.editor {
     text-decoration: underline;
   }
 
-  .button--solid:hover {
+  .button--solid:hover,
+  .button--danger:hover {
     opacity: 0.86;
+  }
+
+  .link__delete:hover:enabled {
+    border-color: #c2281d;
+    background-color: #c2281d;
+    color: #fff;
   }
 }
 

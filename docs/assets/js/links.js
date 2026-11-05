@@ -7,7 +7,8 @@
 // Pages are grouped by project. Which page belongs to which project is kept in
 // shared-links.json at the repository root, outside docs/ so the site never
 // serves it. "Organize" edits it from this page; each change is one commit.
-// "Upload" (upload.js, links/ only) publishes a new page from an HTML file.
+// "Upload" (upload.js, links/ only) publishes a new page from an HTML file;
+// each page's trash button deletes it.
 // Its format, page ids by project name:
 //   { "projects": { "Project name": ["bxz5thwyhn", "ms6fqkcbqu"] } }
 
@@ -19,6 +20,7 @@ const TOKEN_KEY = "gh:token";       // shared with docs/s/s4htpheix3 (CV editor)
 const OLD_TOKEN_KEYS = ["cv:token"];
 const COLLAPSED_KEY = "links:collapsed";
 const NO_PROJECT = "No project";
+const TRASH_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.75A.75.75 0 0 1 6.75 2h2.5a.75.75 0 0 1 .75.75V4M3.75 4l.6 9.1a1.5 1.5 0 0 0 1.5 1.4h4.3a1.5 1.5 0 0 0 1.5-1.4l.6-9.1M6.5 7v4.5M9.5 7v4.5"/></svg>';
 
 // Footer, on both pages
 const ownerLink = document.getElementById("owner-link");   // home page only
@@ -44,6 +46,7 @@ let pages = [];                     // newest first, from describe()
 let projects = {};                  // page id → project name
 let projectsSha = null;             // null until shared-links.json exists
 let organizing = false;
+let confirming = null;              // the open "Delete this page?" strip and its trash button
 const collapsed = new Set(readCollapsed());
 
 function readToken() {
@@ -102,9 +105,9 @@ function toBase64(text) {
 
 const fromBase64 = (data) => new TextDecoder().decode(Uint8Array.from(atob(data.replace(/\s/g, "")), (c) => c.charCodeAt(0)));
 
-async function readProjects() {
+async function readProjects(ref = REPO.branch) {
   try {
-    const file = await gh(`${BASE}/contents/${PROJECTS_FILE}?ref=${REPO.branch}`);
+    const file = await gh(`${BASE}/contents/${PROJECTS_FILE}?ref=${ref}`);
     const map = {};
     for (const [name, ids] of Object.entries(JSON.parse(fromBase64(file.content)).projects || {})) {
       for (const id of ids) map[id] = name;
@@ -118,16 +121,60 @@ async function readProjects() {
 
 // Projects and their page ids in a fixed order (by code point, the same in
 // every browser), so each commit's diff shows only what changed
-async function writeProjects(map, sha, message) {
+function projectsText(map) {
   const byName = {};
   for (const [id, name] of Object.entries(map)) (byName[name] ||= []).push(id);
   const names = Object.keys(byName).sort();
-  const text = JSON.stringify({ projects: Object.fromEntries(names.map((name) => [name, byName[name].sort()])) }, null, 2) + "\n";
+  return JSON.stringify({ projects: Object.fromEntries(names.map((name) => [name, byName[name].sort()])) }, null, 2) + "\n";
+}
+
+async function writeProjects(map, sha, message) {
   const res = await gh(`${BASE}/contents/${PROJECTS_FILE}`, {
     method: "PUT",
-    body: { message, content: toBase64(text), branch: REPO.branch, ...(sha && { sha }) },
+    body: { message, content: toBase64(projectsText(map)), branch: REPO.branch, ...(sha && { sha }) },
   });
   return res.content.sha;
+}
+
+// One commit removes every file in the page's folder and, if it's in a
+// project, its id from shared-links.json. The contents API deletes one file
+// per commit, so the commit is built with the Git database API instead.
+async function deletePage(page) {
+  const folder = `${REPO.dir}/${page.id}/`;
+  for (let tries = 1; ; tries++) {
+    const head = (await gh(`${BASE}/git/ref/heads/${REPO.branch}`)).object.sha;
+    const { tree } = await gh(`${BASE}/git/commits/${head}`);
+    const [files, saved] = await Promise.all([
+      gh(`${BASE}/git/trees/${tree.sha}?recursive=1`),
+      readProjects(head),
+    ]);
+    const changes = files.tree
+      .filter((file) => file.type === "blob" && file.path.startsWith(folder))
+      .map((file) => ({ path: file.path, mode: file.mode, type: "blob", sha: null }));
+    if (saved.map[page.id]) {
+      delete saved.map[page.id];
+      changes.push({ path: PROJECTS_FILE, mode: "100644", type: "blob", content: projectsText(saved.map) });
+    }
+    let projectsBlob = saved.sha;
+    if (changes.length) {
+      const next = await gh(`${BASE}/git/trees`, { method: "POST", body: { base_tree: tree.sha, tree: changes } });
+      const commit = await gh(`${BASE}/git/commits`, {
+        method: "POST",
+        body: { message: `Delete shared page "${page.title}"`, tree: next.sha, parents: [head] },
+      });
+      try {
+        await gh(`${BASE}/git/refs/heads/${REPO.branch}`, { method: "PATCH", body: { sha: commit.sha } });
+      } catch (error) {
+        // Someone committed meanwhile (an upload, a project change): start again on top of it
+        if (error.status === 422 && tries < 3) continue;
+        throw error;
+      }
+      projectsBlob = next.tree.find((entry) => entry.path === PROJECTS_FILE)?.sha ?? null;
+    }
+    projects = saved.map;
+    projectsSha = projectsBlob;
+    return;
+  }
 }
 
 // If the file changed since it was loaded (GitHub answers 409, or 422 when it
@@ -204,9 +251,86 @@ function row(page, projectNames) {
   if (page.noindex) meta.append(el("span", null, "noindex"));
 
   const actions = el("div", "link__actions");
-  actions.append(...(organizing ? [projectPicker(page, projectNames)] : linkButtons(page)));
+  actions.append(...(organizing ? [projectPicker(page, projectNames)] : [...linkButtons(page), deleteButton(page, item)]));
   item.append(title, meta, actions);
   return item;
+}
+
+// The trash button opens a strip under the row that asks once more
+function deleteButton(page, item) {
+  const button = el("button", "button button--sm link__delete");
+  button.type = "button";
+  button.innerHTML = TRASH_ICON;
+  button.dataset.focusKey = "delete:" + page.id;
+  button.setAttribute("aria-label", "Delete " + page.title);
+  button.setAttribute("aria-expanded", "false");
+  button.setAttribute("aria-controls", "confirm-" + page.id);
+  button.addEventListener("click", () => {
+    const wasOpen = confirming?.button === button;
+    closeConfirm();
+    if (!wasOpen) askDelete(page, item, button);
+  });
+  return button;
+}
+
+function closeConfirm(focus = false) {
+  if (!confirming) return;
+  confirming.box.remove();
+  confirming.button.setAttribute("aria-expanded", "false");
+  if (focus) confirming.button.focus();
+  confirming = null;
+}
+
+function askDelete(page, item, button) {
+  const box = el("div", "link__confirm");
+  box.id = "confirm-" + page.id;
+  const text = el("p", "link__confirm-text", "Delete this page? Its link stops working for everyone.");
+  text.append(el("span", "link__confirm-help", `Everything in /s/${page.id}/ is removed. It stays in the repository's history on GitHub.`));
+  const cancel = el("button", "button button--sm", "Cancel");
+  cancel.type = "button";
+  const remove = el("button", "button button--sm button--danger", "Delete page");
+  remove.type = "button";
+  const buttons = el("div", "link__confirm-buttons");
+  buttons.append(cancel, remove);
+  const error = el("p", "link__confirm-error");
+  error.setAttribute("role", "status");
+  box.append(text, buttons, error);
+
+  cancel.addEventListener("click", () => closeConfirm(true));
+  box.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !remove.disabled) closeConfirm(true);
+  });
+  remove.addEventListener("click", async () => {
+    error.textContent = "";
+    remove.textContent = "Deleting…";
+    let failure = null;
+    setBusy(true);
+    try {
+      await deletePage(page);
+    } catch (e) {
+      failure = e;
+    }
+    setBusy(false);
+    if (failure?.status === 401) return signOut("Your sign-in has expired. Sign in again to see your links.");
+    if (failure) {
+      remove.textContent = "Delete page";
+      error.textContent = "Couldn't delete the page (" + failure.message + ").";
+      remove.focus();
+      return;
+    }
+    pages = pages.filter((other) => other !== page);
+    count.textContent = pages.length;
+    window.forgetUpload?.(page.id);
+    note.textContent = `Deleted "${page.title}". Its link stops working in a minute or two.`;
+    note.hidden = false;
+    renderLinks();
+    heading.focus();
+  });
+
+  item.append(box);
+  button.setAttribute("aria-expanded", "true");
+  confirming = { box, button };
+  cancel.focus();
 }
 
 function linkButtons(page) {
@@ -337,6 +461,7 @@ function groupSection({ name, items }, index, projectNames) {
 }
 
 function renderLinks(focusKey) {
+  confirming = null;
   const groups = groupPages();
   const projectNames = groups.map((group) => group.name).filter(Boolean).sort((a, b) => a.localeCompare(b));
   if (projectNames.length) {

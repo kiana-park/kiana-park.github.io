@@ -45,6 +45,7 @@
   let chosen = null;       // { name, html, doc, title, hasTitle }
   let publishing = false;
   let run = 0;             // goes up when the panel changes, to stop a stale live check
+  let shownId = null;      // the page on show once published
 
   // Tags with their offsets in the file. Comments and the insides of script,
   // style, textarea and title are skipped, as in edit.js.
@@ -278,6 +279,10 @@
     panel.hidden = done.hidden = true;
   }
   window.closeUpload = close;     // links.js closes the panel on sign-out
+  // and, once a page is deleted, takes its "Published" panel away
+  window.forgetUpload = (id) => {
+    if (!done.hidden && id === shownId) close();
+  };
 
   function setPublishing(on) {
     publishing = on;
@@ -326,6 +331,7 @@
     run++;
     panel.hidden = true;
     done.hidden = false;
+    shownId = page.id;
     doneTitle.textContent = page.title;
     doneMeta.textContent = page.url;
     doneStatus.textContent = "Published. The link starts working in a minute or two.";
