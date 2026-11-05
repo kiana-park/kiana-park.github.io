@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="../assets/js/main.js" defer></script>
   <script src="../assets/js/links.js" defer></script>
+  <script src="../assets/js/upload.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -44,11 +45,74 @@
       <div class="links__head">
         <h1 id="links-title" class="label" tabindex="-1">Shared links <span id="links-count" class="links__count"></span></h1>
         <div id="links-tools" class="links__tools" hidden>
+          <button id="links-upload" class="button button--sm" type="button">Upload</button>
           <button id="links-organize" class="button button--sm" type="button">Organize</button>
           <button id="links-refresh" class="button button--sm" type="button">Refresh</button>
         </div>
+        <input id="upload-file" type="file" accept=".html,.htm,text/html" hidden>
       </div>
       <p id="links-hint" class="links__hint" hidden>Pick a project for each page. Each change is saved to the site&rsquo;s repository right away.</p>
+
+      <!-- Upload (assets/js/upload.js): opens once you pick a file with
+           "Upload" or drop one on the page, and publishes it as a new page -->
+      <form id="upload" class="upload" hidden>
+        <div class="upload__file">
+          <div class="upload__about">
+            <h2 id="upload-title" class="upload__title" tabindex="-1"></h2>
+            <p id="upload-meta" class="upload__meta"></p>
+          </div>
+          <button id="upload-change" class="button button--sm" type="button">Change file</button>
+        </div>
+        <div class="upload__rows">
+          <div class="upload__row">
+            <label class="upload__label" for="upload-project">Project</label>
+            <div><span class="picker"><select id="upload-project" class="picker__select"></select></span></div>
+          </div>
+          <div class="upload__row">
+            <span id="upload-search" class="upload__label">Search engines</span>
+            <div role="group" aria-labelledby="upload-search">
+              <label class="upload__check"><input id="upload-noindex" type="checkbox" checked> Keep it out of search results</label>
+              <p class="upload__help">Adds noindex. Anyone with the link can still open it.</p>
+            </div>
+          </div>
+          <div id="upload-notes" class="upload__row" hidden>
+            <span id="upload-notes-label" class="upload__label">Speaker notes</span>
+            <div>
+              <div class="upload__choices" role="radiogroup" aria-labelledby="upload-notes-label">
+                <label class="upload__check"><input type="radio" name="notes" value="remove" checked> Remove</label>
+                <label class="upload__check"><input type="radio" name="notes" value="keep"> Keep</label>
+              </div>
+              <p id="upload-notes-help" class="upload__help"></p>
+              <details class="upload__peek">
+                <summary>Show them</summary>
+                <ol id="upload-notes-list"></ol>
+              </details>
+            </div>
+          </div>
+        </div>
+        <p id="upload-warning" class="upload__warning" hidden></p>
+        <div class="upload__foot">
+          <p class="upload__public">The repository is public: anyone can read the file on GitHub.</p>
+          <div class="upload__buttons">
+            <button id="upload-cancel" class="button button--sm" type="button">Cancel</button>
+            <button id="upload-publish" class="button button--sm button--solid" type="submit">Publish</button>
+          </div>
+        </div>
+        <p id="upload-status" class="upload__status" role="status"></p>
+      </form>
+
+      <div id="upload-done" class="upload" hidden>
+        <div class="upload__file">
+          <div class="upload__about">
+            <h2 id="upload-done-title" class="upload__title" tabindex="-1"></h2>
+            <p id="upload-done-meta" class="upload__meta"></p>
+          </div>
+        </div>
+        <div class="upload__foot">
+          <p id="upload-done-status" class="upload__public" role="status"></p>
+          <div id="upload-done-actions" class="upload__buttons"></div>
+        </div>
+      </div>
 
       <form id="signin-form" class="signin-form" hidden>
         <p>Sign in to see the pages you share by link. Use a GitHub token that can write to this site&rsquo;s repository; the CV editor uses the same sign-in.</p>

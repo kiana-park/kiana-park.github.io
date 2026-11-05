@@ -7,6 +7,7 @@
 // Pages are grouped by project. Which page belongs to which project is kept in
 // shared-links.json at the repository root, outside docs/ so the site never
 // serves it. "Organize" edits it from this page; each change is one commit.
+// "Upload" (upload.js, links/ only) publishes a new page from an HTML file.
 // Its format, page ids by project name:
 //   { "projects": { "Project name": ["bxz5thwyhn", "ms6fqkcbqu"] } }
 
@@ -29,6 +30,7 @@ const list = document.getElementById("links-list");
 const count = document.getElementById("links-count");
 const note = document.getElementById("links-status");
 const tools = document.getElementById("links-tools");
+const uploadButton = document.getElementById("links-upload");
 const organizeButton = document.getElementById("links-organize");
 const refreshButton = document.getElementById("links-refresh");
 const hint = document.getElementById("links-hint");
@@ -90,7 +92,14 @@ async function gh(path, { accept = "application/vnd.github+json", auth = token, 
   return accept.endsWith(".raw") ? res.text() : res.json();
 }
 
-const toBase64 = (text) => btoa(String.fromCharCode(...new TextEncoder().encode(text)));
+// In slices: spreading a whole large file into one call overflows the stack
+function toBase64(text) {
+  const bytes = new TextEncoder().encode(text);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(binary);
+}
+
 const fromBase64 = (data) => new TextDecoder().decode(Uint8Array.from(atob(data.replace(/\s/g, "")), (c) => c.charCodeAt(0)));
 
 async function readProjects() {
@@ -152,7 +161,7 @@ async function changeProjects(change, message, focusKey = document.activeElement
 
 function setBusy(busy) {
   list.setAttribute("aria-busy", busy);
-  for (const control of [organizeButton, refreshButton, ...list.querySelectorAll("button, select")]) control.disabled = busy;
+  for (const control of [uploadButton, organizeButton, refreshButton, ...list.querySelectorAll("button, select")]) control.disabled = busy;
 }
 
 function el(tag, className, text) {
@@ -376,6 +385,7 @@ function render() {
   if (!token) {
     pages = [];
     setOrganizing(false);
+    window.closeUpload?.();
     list.replaceChildren();
     count.textContent = "";
     note.hidden = true;
