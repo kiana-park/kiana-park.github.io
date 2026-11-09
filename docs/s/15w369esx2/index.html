@@ -66,6 +66,17 @@ nav.toc{display:none}
 }
 main{min-width:0}
 
+/* 설문 */
+.survey{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;padding:20px 22px;border-radius:var(--r);background:var(--accent-soft);border:1px solid var(--accent)}
+.survey .tag{color:var(--accent-text);border-color:var(--accent);margin:0}
+.survey h2{margin-top:8px}
+.survey p{margin-top:4px;font-size:13.5px;color:var(--muted)}
+.survey-btn{flex:none;display:inline-flex;align-items:center;gap:6px;height:42px;padding:0 18px;border-radius:10px;background:var(--accent);color:#fff;font-size:14px;font-weight:650}
+.survey-btn:hover{text-decoration:none;filter:brightness(1.08)}
+@media (prefers-color-scheme:dark){.survey-btn{color:#0c0e12}}
+.survey-done{display:none;color:var(--ok)!important}
+.survey.opened .survey-done{display:block}
+
 /* 어디에 설치하나요 */
 .where{display:grid;gap:10px;margin-top:12px}
 @media (min-width:700px){.where{grid-template-columns:1fr 1fr}}
@@ -227,6 +238,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);font-
 
 <nav class="toc" aria-label="목차">
   <ol>
+    <li><a href="#s-survey"><span>·</span>설문 (필수)</a></li>
     <li><a href="#s-where"><span>·</span>어디에 설치하나요</a></li>
     <li><a href="#s-vscode"><span>0</span>VS Code 열기</a></li>
     <li><a href="#s-prereq"><span>1</span>Git · Node 확인</a></li>
@@ -245,7 +257,19 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);font-
 
 <main>
 
-<section id="s-where" style="margin-top:0">
+<section id="s-survey" style="margin-top:0">
+  <div class="survey" id="survey">
+    <div>
+      <span class="tag">시작하기 전에 · 필수</span>
+      <h2>설문에 먼저 응답해 주세요</h2>
+      <p>설치를 시작하기 전에 이 설문을 <b>꼭</b> 마쳐 주세요. 제출한 뒤에 다음 단계로 넘어가면 됩니다.</p>
+      <p class="survey-done">설문 창을 열었습니다. 제출까지 마쳤다면 아래로 진행하세요.</p>
+    </div>
+    <a class="survey-btn" id="survey-btn" href="https://forms.gle/QpXpRJmUCEDmZEU6A" target="_blank" rel="noopener">설문 응답하기 →</a>
+  </div>
+</section>
+
+<section id="s-where">
   <div class="sec-head"><h2>먼저, 어디에 설치하나요?</h2></div>
   <p><b>Claude Code·Codex를 실행하는 바로 그 컴퓨터</b>에 설치합니다. 다른 곳에 설치하면 대화 기록이 하나도 보이지 않습니다.</p>
   <div class="where">
@@ -556,6 +580,11 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);font-
   const ua = navigator.userAgent;
   state.os = OSES.includes(savedOs) ? savedOs : /Windows/i.test(ua) ? "win" : /Linux/i.test(ua) && !/Android/i.test(ua) ? "linux" : "mac";
   if (owner) document.body.classList.add("owner");
+
+  // 설문: 한 번 열었으면 안내 문구를 바꾼다
+  const markSurvey = () => { $("#survey").classList.add("opened"); $("#survey-btn").textContent = "설문 다시 열기 →"; };
+  if (store.get("localStorage", PREFIX + "survey")) markSurvey();
+  $("#survey-btn").addEventListener("click", () => { store.set("localStorage", PREFIX + "survey", "opened"); markSurvey(); });
 
   for (const b of document.querySelectorAll("#os button")) {
     b.addEventListener("click", () => { state.os = b.dataset.os; store.set("localStorage", PREFIX + "os", state.os); render(); });
