@@ -2,9 +2,10 @@
 // docs/s/<random id>/index.html. One commit adds the page and, if you put it
 // in a project, a second one updates shared-links.json.
 //
-// Before publishing you pick its project, whether search engines may list it
-// and, when it has speaker notes, whether to keep them. Those choices change
-// the file's own text: notes are cut out and the robots tag is added or
+// Before publishing you pick its project, whether search engines may list it,
+// whether it gets a "Save as PDF" button (assets/js/pdf.js) and, when it has
+// speaker notes, whether to keep them. Those choices change the file's own
+// text: notes are cut out and the robots tag and the PDF script are added or
 // removed in place, so the rest of the file is published byte for byte.
 //
 // links/ only. Runs after links.js and uses its gh(), toBase64(), el(),
@@ -27,6 +28,7 @@
   const rows = panel.querySelector(".upload__rows");
   const projectSelect = document.getElementById("upload-project");
   const noindexInput = document.getElementById("upload-noindex");
+  const pdfInput = document.getElementById("upload-pdf");
   const notesRow = document.getElementById("upload-notes");
   const notesHelp = document.getElementById("upload-notes-help");
   const notesList = document.getElementById("upload-notes-list");
@@ -147,10 +149,11 @@
   }
 
   // Adds noindex (and no-referrer, so links out of the page don't pass on its
-  // address) or removes the robots tag, and adds a missing title. A file that
-  // already says noindex keeps its own tag. New tags go after <meta charset>
-  // (or <head>, <html>, the doctype), each on its own line when the file has lines.
-  function withHead(html, { noindex, title }) {
+  // address) or removes the robots tag, adds or removes the PDF script, and
+  // adds a missing title. A file that already has the noindex tag or the
+  // script keeps its own. New tags go after <meta charset> (or <head>, <html>,
+  // the doctype), each on its own line when the file has lines.
+  function withHead(html, { noindex, pdf, title }) {
     const tags = scanTags(html);
     const metas = tags.filter((tag) => !tag.close && tag.name === "meta");
     const named = (tag, name) => (attr(tag.text, "name") || "").toLowerCase() === name;
@@ -158,12 +161,21 @@
     const hasNoindex = robots.length === 1 && /noindex/i.test(attr(robots[0].text, "content") || "");
     const edits = noindex && hasNoindex ? [] : robots.map((tag) => [...wholeLine(html, tag.start, tag.end), ""]);
 
+    // The PDF script, each from its <script> to its </script>
+    const pdfScripts = tags.flatMap((tag, i) => {
+      if (tag.close || tag.name !== "script" || !/\/assets\/js\/pdf\.js$/.test(attr(tag.text, "src") || "")) return [];
+      const close = tags[i + 1]?.close && tags[i + 1].name === "script" ? tags[i + 1] : tag;
+      return [[tag.start, close.end]];
+    });
+    if (!pdf) for (const [start, end] of pdfScripts) edits.push([...wholeLine(html, start, end), ""]);
+
     const add = [];
     if (title) add.push(`<title>${title.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</title>`);
     if (noindex) {
       if (!hasNoindex) add.push('<meta name="robots" content="noindex, nofollow">');
       if (!metas.some((tag) => named(tag, "referrer"))) add.push('<meta name="referrer" content="no-referrer">');
     }
+    if (pdf && !pdfScripts.length) add.push(`<script src="${SITE}/assets/js/pdf.js" defer></script>`);
     if (add.length) {
       const anchor = metas.find((tag) => attr(tag.text, "charset") != null)
         || tags.find((tag) => !tag.close && tag.name === "head")
@@ -251,6 +263,7 @@
 
     fillProjects();
     noindexInput.checked = true;
+    pdfInput.checked = true;
 
     const notes = [...doc.querySelectorAll(NOTES)]
       .filter((node) => !node.parentElement?.closest(NOTES))
@@ -352,10 +365,11 @@
     const { html, doc, title, hasTitle } = chosen;
     const name = projectSelect.value;
     const noindex = noindexInput.checked;
+    const pdf = pdfInput.checked;
     const removeNotes = !notesRow.hidden && panel.elements.notes.value === "remove";
 
     let text = removeNotes ? withoutNotes(html, doc) : html;
-    text = withHead(text, { noindex, title: hasTitle ? "" : title });
+    text = withHead(text, { noindex, pdf, title: hasTitle ? "" : title });
 
     setPublishing(true);
     status.textContent = "";
