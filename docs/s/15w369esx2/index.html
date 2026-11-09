@@ -77,6 +77,20 @@ main{min-width:0}
 .survey-done{display:none;color:var(--ok)!important}
 .survey.opened .survey-done{display:block}
 
+/* 쓸 수 있는 분 */
+.who{display:grid;gap:10px;margin-top:12px}
+@media (min-width:700px){.who{grid-template-columns:1fr 1fr}}
+.who .card{margin:0}
+.who .no{background:var(--surface-2)}
+.who .st{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:650}
+.who .st::before{font-family:var(--mono);font-size:13px}
+.who .yes .st{color:var(--ok)}
+.who .yes .st::before{content:"✓"}
+.who .no .st{color:var(--bad)}
+.who .no .st::before{content:"✕"}
+.who h4{font-size:14px;font-weight:650;margin-top:6px}
+.who p{font-size:13px;color:var(--muted);margin-top:6px}
+
 /* 어디에 설치하나요 */
 .where{display:grid;gap:10px;margin-top:12px}
 @media (min-width:700px){.where{grid-template-columns:1fr 1fr}}
@@ -239,6 +253,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);font-
 <nav class="toc" aria-label="목차">
   <ol>
     <li><a href="#s-survey"><span>·</span>설문 (필수)</a></li>
+    <li><a href="#s-who"><span>·</span>쓸 수 있는 분</a></li>
     <li><a href="#s-where"><span>·</span>어디에 설치하나요</a></li>
     <li><a href="#s-vscode"><span>0</span>VS Code 열기</a></li>
     <li><a href="#s-prereq"><span>1</span>Git · Node 확인</a></li>
@@ -269,6 +284,23 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);font-
   </div>
 </section>
 
+<section id="s-who">
+  <div class="sec-head"><h2>이런 분이 쓸 수 있어요</h2></div>
+  <p>vibe-teacher는 내 컴퓨터(또는 서버)에 남은 AI 코딩 도구의 대화 기록을 읽어서 정리합니다. 그래서 <b>VS Code에서 Claude Code·Codex 같은 도구로 개발하는 분만</b> 쓸 수 있습니다.</p>
+  <div class="who">
+    <div class="card yes">
+      <span class="st">지원</span>
+      <h4>VS Code에서 Claude Code · Codex · Copilot 사용</h4>
+      <p>VS Code의 터미널이나 확장에서 Claude Code, Codex, GitHub Copilot으로 개발하고 있다면 이 가이드대로 설치하세요.</p>
+    </div>
+    <div class="card no">
+      <span class="st">지원하지 않음</span>
+      <h4>웹 브라우저의 AI 빌더 (Lovable · v0 · Replit 등)</h4>
+      <p>대화 기록이 그 서비스 안에만 남아서 읽을 수 없습니다. 웹 빌더로만 만들고 있다면 설치해도 볼 수 있는 기록이 없습니다.</p>
+    </div>
+  </div>
+</section>
+
 <section id="s-where">
   <div class="sec-head"><h2>먼저, 어디에 설치하나요?</h2></div>
   <p><b>Claude Code·Codex를 실행하는 바로 그 컴퓨터</b>에 설치합니다. 다른 곳에 설치하면 대화 기록이 하나도 보이지 않습니다.</p>
@@ -284,9 +316,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);font-
   </div>
   <div class="note"><p><b>잘 모르겠다면</b> 평소 개발하는 VS Code 창의 <b>왼쪽 아래 구석</b>을 보세요. <code>SSH: 서버이름</code>이 보이면 서버에서, <code>WSL: Ubuntu</code>가 보이면 WSL(Windows 안의 Linux)에서, 아무것도 없으면 노트북에서 개발하고 있는 것입니다. 서버·WSL은 아래에서 <b>Linux</b>를 고르세요.</p></div>
   <ul class="list muted">
-    <li>노트북과 서버 <b>둘 다</b>에서 개발한다면 기록을 보고 싶은 곳마다 설치합니다. 같은 이메일로 로그인하면 학습 기록은 이어지고, 대화 기록은 설치한 곳의 것만 보입니다.</li>
-    <li>읽는 기록은 Claude Code · Codex CLI · Copilot CLI · VS Code Copilot Chat입니다. 웹사이트에서만 AI로 만들었다면 읽을 기록이 없습니다.</li>
-  </ul>
+    <li>노트북과 서버 <b>둘 다</b>에서 개발한다면 기록을 보고 싶은 곳마다 설치합니다. 같은 이메일로 로그인하면 학습 기록은 이어지고, 대화 기록은 설치한 곳의 것만 보입니다.</li>  </ul>
 
   <div class="setup">
     <span class="label">설치할 곳</span>
