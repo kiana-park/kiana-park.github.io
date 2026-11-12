@@ -57,10 +57,12 @@ const sizeText = document.getElementById("edit-size");
 const downloadButton = document.getElementById("edit-download");
 const copyButton = document.getElementById("edit-copy");
 const replaceButton = document.getElementById("edit-replace");
+const pasteButton = document.getElementById("edit-paste");
 const fileInput = document.getElementById("edit-file");
 
 const token = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
 const HINT = "Click any text to change it, Enter or Esc when you're done. Point at an image to download, copy or replace it.";
+const PASTE_KEY = /Mac|iPhone|iPad/.test(navigator.platform) ? "⌘V" : "Ctrl+V";
 
 let source = "";                    // the file as last committed
 let sha = null;
@@ -299,6 +301,7 @@ frame.addEventListener("load", () => {
     changed.add(block.getAttribute(MARK));
     update();
   }, true);
+  win.addEventListener("paste", pasteImage, true);
   win.addEventListener("paste", (event) => {
     if (!editableOf(event.target)) return;
     event.preventDefault();
@@ -325,7 +328,7 @@ frame.addEventListener("load", () => {
 const editableOf = (node) => (node?.nodeType === 1 ? node : node?.parentElement)?.closest?.(`[${MARK}]`);
 
 function onKey(event) {
-  hideTools();
+  if (!event.metaKey && !event.ctrlKey) hideTools();   // but keep it for a paste over the image
   if (isSaveKey(event)) {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -514,8 +517,9 @@ function showTools(el, url) {
   el.setAttribute(POINTED, "");
   shown = { el, url };
   const stored = embedded(url);
-  replaceButton.disabled = !stored;
+  replaceButton.disabled = pasteButton.disabled = !stored;
   replaceButton.title = stored ? "Pick an image file, or drop one on the image" : "Only images stored in the page itself can be replaced";
+  pasteButton.title = stored ? `Replace it with the image you copied, or point at it and press ${PASTE_KEY}` : replaceButton.title;
   sizeText.textContent = "";
   tools.hidden = false;
   place();
@@ -631,6 +635,28 @@ async function replace(url, file) {
     (reshaped ? ` It's ${size(after)} and the old one ${size(before)}, so it may look stretched or cut off.` : ""));
 }
 
+// ⌘V or Ctrl+V, with the image bar up and an image copied, replaces that image
+function pasteImage(event) {
+  const file = [...event.clipboardData.files].find((f) => IMAGE_TYPES.test(f.type));
+  if (!shown || !file) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  replace(shown.url, file);
+}
+
+// The Paste button reads the clipboard itself, which the browser may ask you to allow
+async function pasteFromClipboard({ url }) {
+  try {
+    for (const item of await navigator.clipboard.read()) {
+      const type = item.types.find((t) => IMAGE_TYPES.test(t));
+      if (type) return replace(url, await item.getType(type));
+    }
+    flash("There's no image on the clipboard to paste.");
+  } catch {
+    flash(`Couldn't read the clipboard. Point at the image and press ${PASTE_KEY} instead.`);
+  }
+}
+
 // Shows the new image in the frame wherever the old one was: in <img>s,
 // style attributes and the page's style sheets. Returns where it is now.
 function swapShown(from, to) {
@@ -720,6 +746,9 @@ fileInput.addEventListener("change", () => {
   fileInput.value = "";
   if (file && picking) replace(picking, file);
 });
+pasteButton.addEventListener("click", () => shown && pasteFromClipboard(shown));
+pasteButton.hidden = !navigator.clipboard?.read;
+addEventListener("paste", pasteImage);
 addEventListener("resize", hideTools);
 addEventListener("beforeunload", (event) => {
   if (!changed.size && !swaps.size) return;

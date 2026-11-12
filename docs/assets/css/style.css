@@ -1445,7 +1445,8 @@ body.editor {
   background-color: #fff;
 }
 
-/* By the image you point at in the frame: its size, Download, Copy, Replace */
+/* By the image you point at in the frame: its size, Download, Copy, Replace,
+   Paste */
 .editor__tools {
   position: fixed;
   display: flex;
