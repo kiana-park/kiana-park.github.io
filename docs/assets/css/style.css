@@ -1445,8 +1445,49 @@ body.editor {
   background-color: #fff;
 }
 
+/* By the image you point at in the frame: its size, Download, Copy, Replace */
+.editor__tools {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  padding: var(--space-1);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background-color: var(--surface);
+  box-shadow: var(--shadow-hover);
+}
+
+.editor__size {
+  padding-inline: var(--space-2);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.editor__size:empty {
+  display: none;
+}
+
+.editor__tool {
+  padding: var(--space-1) var(--space-3);
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--text);
+  font: 500 var(--text-xs) / 1rem var(--font-sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease);
+}
+
+.editor__tool:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .editor__actions[hidden],
-.editor__frame[hidden] {
+.editor__frame[hidden],
+.editor__tools[hidden] {
   display: none;
 }
 
@@ -1517,6 +1558,10 @@ body.editor {
   .button--solid:hover,
   .button--danger:hover {
     opacity: 0.86;
+  }
+
+  .editor__tool:hover:enabled {
+    background-color: var(--border);
   }
 
   .link__delete:hover:enabled {

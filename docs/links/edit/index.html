@@ -23,8 +23,8 @@
 </head>
 <body class="editor">
   <!-- Owner only: assets/js/edit.js loads docs/s/<id>/index.html (?id=<id>)
-       from the GitHub API into the frame, makes its text editable, and
-       commits your changes -->
+       from the GitHub API into the frame, makes its text editable and its
+       images downloadable and replaceable, and commits your changes -->
   <header class="editor__bar">
     <a class="editor__back" href="../"><span aria-hidden="true">&larr;</span> Shared links</a>
     <div class="editor__heading">
@@ -42,5 +42,14 @@
     <p id="edit-message" class="editor__message" hidden></p>
     <iframe id="edit-frame" class="editor__frame" title="The page you're editing" hidden></iframe>
   </main>
+
+  <!-- The image bar, placed over the frame by the image you point at -->
+  <div id="edit-tools" class="editor__tools" hidden>
+    <span id="edit-size" class="editor__size"></span>
+    <button id="edit-download" class="editor__tool" type="button">Download</button>
+    <button id="edit-copy" class="editor__tool" type="button">Copy</button>
+    <button id="edit-replace" class="editor__tool" type="button">Replace</button>
+  </div>
+  <input id="edit-file" type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/avif,image/svg+xml" hidden>
 </body>
 </html>

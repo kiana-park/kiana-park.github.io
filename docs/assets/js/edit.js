@@ -1,6 +1,7 @@
-// Text editor for the unlisted pages in docs/s/, opened with "Edit" on links/.
-// Shows the page as it is, lets you change its wording in place, and commits
-// docs/s/<id>/index.html with the GitHub token links/ signs in with.
+// Editor for the unlisted pages in docs/s/, opened with "Edit" on links/.
+// Shows the page as it is, lets you change its wording in place and
+// download, copy or replace its images, and commits docs/s/<id>/index.html
+// with the GitHub token links/ signs in with.
 //
 // A save rewrites only what you changed. Each piece of text on the page, and
 // each editable block, is matched to its place in the file, so a save
@@ -9,6 +10,10 @@
 // byte for byte the same. Only if a block can't be found in the file is the
 // whole page written out again from its parsed form: it looks and works the
 // same, but its markup gets reformatted.
+//
+// An image can be replaced if the file holds it as a data: URL, in an <img>,
+// a style or a script's table of images. The new image goes in as a data:
+// URL everywhere the old one's was, so every copy of it on the page changes.
 
 const REPO = { owner: "kiana-park", repo: "kiana-park.github.io", branch: "main", dir: "docs/s" };
 const BASE = `/repos/${REPO.owner}/${REPO.repo}`;
@@ -16,9 +21,13 @@ const SITE = "https://kiana-park.github.io";
 const TOKEN_KEY = "gh:token";       // shared with links/ and the CV editor
 const MARK = "data-kp-edit";        // only in the frame, never saved
 const CHANGED = "data-kp-changed";
+const POINTED = "data-kp-image";    // the image the image bar is by
+const SWAPPED = "data-kp-swapped";  // an image you replaced
+const IMAGE_TYPES = /^image\/(?:png|jpeg|gif|webp|avif|svg\+xml)$/;
 
 // Never editable, and the inline elements a block of text may contain
 const SKIP = new Set(["audio", "button", "canvas", "iframe", "input", "math", "noscript", "object", "script", "select", "style", "svg", "template", "textarea", "video"]);
+const IN_SKIP = [...SKIP].join();
 const INLINE = new Set(["a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "del", "dfn", "em", "i", "img", "ins", "kbd", "mark", "q", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr"]);
 // Their text isn't page text: code, styles, form values and the tab title
 const RAW = new Set(["script", "style", "textarea", "title"]);
@@ -29,6 +38,8 @@ const FRAME_CSS = `
   [${MARK}]:hover { outline: 1px dashed rgb(46 91 212 / 0.6) !important; outline-offset: 2px; }
   [${MARK}]:focus { outline: 2px solid #2e5bd4 !important; outline-offset: 2px; }
   [${CHANGED}] { background-color: rgb(250 204 21 / 0.3) !important; }
+  [${SWAPPED}] { outline: 2px solid rgb(250 204 21) !important; outline-offset: 2px; }
+  [${POINTED}] { outline: 1px dashed rgb(46 91 212 / 0.6) !important; outline-offset: 2px; }
 `;
 
 const id = new URLSearchParams(location.search).get("id") || "";
@@ -41,9 +52,15 @@ const actions = document.getElementById("edit-actions");
 const openLink = document.getElementById("edit-open");
 const discardButton = document.getElementById("edit-discard");
 const saveButton = document.getElementById("edit-save");
+const tools = document.getElementById("edit-tools");
+const sizeText = document.getElementById("edit-size");
+const downloadButton = document.getElementById("edit-download");
+const copyButton = document.getElementById("edit-copy");
+const replaceButton = document.getElementById("edit-replace");
+const fileInput = document.getElementById("edit-file");
 
 const token = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
-const HINT = "Click any text to change it. Enter or Esc when you're done.";
+const HINT = "Click any text to change it, Enter or Esc when you're done. Point at an image to download, copy or replace it.";
 
 let source = "";                    // the file as last committed
 let sha = null;
@@ -52,6 +69,13 @@ let blocks = [];                    // editable elements of doc; [MARK="n"] in t
 let places = null;                  // text node of doc → [start, end] in source; null if unmatched
 let ranges = new Map();             // block → [start, end] of its content in source
 const changed = new Set();          // n of each block you edited
+const swaps = new Map();            // data: URL of each image you replaced → the new image's
+const pictures = new Map();         // image URL → the image, decoded
+let shown = null;                   // { el, url } of the image the image bar is by
+let pointed = null;                 // the element under the pointer
+let hideTimer = 0;
+let picking = null;                 // URL of the image Replace is picking a file for
+let flashTimer = 0;
 let saving = false;
 let note = HINT;
 
@@ -232,6 +256,8 @@ function show() {
   base.remove();
   blocks.forEach((el) => el.removeAttribute(MARK));
   changed.clear();
+  swaps.clear();
+  hideTools();
   update();
 }
 
@@ -259,7 +285,13 @@ frame.addEventListener("load", () => {
   win.addEventListener("click", (event) => {
     if (event.target.closest?.("a[href]")) event.preventDefault();       // stay in the editor
     if (editableOf(event.target)) event.stopImmediatePropagation();     // e.g. a deck's click-to-advance
+    point(event.target);                                                // a tap shows the image bar
   }, true);
+  win.addEventListener("pointermove", (event) => point(event.target), true);
+  win.addEventListener("pointerout", (event) => {
+    if (!event.relatedTarget && event.pointerType !== "touch") leave();   // out of the frame
+  }, true);
+  win.addEventListener("scroll", place, true);
   win.addEventListener("input", (event) => {
     const block = editableOf(event.target);
     if (!block) return;
@@ -273,14 +305,27 @@ frame.addEventListener("load", () => {
     const text = event.clipboardData.getData("text/plain").replace(/\s+/g, " ");
     page.execCommand("insertText", false, text);
   }, true);
-  for (const type of ["dragover", "drop"]) {
-    win.addEventListener(type, (event) => { if (editableOf(event.target)) event.preventDefault(); }, true);
-  }
+  // Nothing can be dropped into the text, and a file dropped anywhere but on
+  // an image would open in the frame; dropped on an image, it replaces it
+  win.addEventListener("dragover", (event) => {
+    const file = event.dataTransfer.types.includes("Files");
+    if (!file && !editableOf(event.target)) return;
+    event.preventDefault();
+    if (file) event.dataTransfer.dropEffect = imageAt(event.target) ? "copy" : "none";
+  }, true);
+  win.addEventListener("drop", (event) => {
+    const [file] = event.dataTransfer.files;
+    if (!file && !editableOf(event.target)) return;
+    event.preventDefault();
+    const url = file && imageAt(event.target);
+    if (url) replace(url, file);
+  }, true);
 });
 
 const editableOf = (node) => (node?.nodeType === 1 ? node : node?.parentElement)?.closest?.(`[${MARK}]`);
 
 function onKey(event) {
+  hideTools();
   if (isSaveKey(event)) {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -311,6 +356,10 @@ const sameShape = (a, b) =>
 // to other text (kept if the block had &nbsp; to begin with)
 function edited(n) {
   const copy = frame.contentDocument.querySelector(`[${MARK}="${n}"]`).cloneNode(true);
+  for (const el of copy.querySelectorAll(`[${POINTED}], [${SWAPPED}]`)) {
+    el.removeAttribute(POINTED);
+    el.removeAttribute(SWAPPED);
+  }
   for (const br of copy.querySelectorAll("br")) if (!br.parentNode.textContent) br.remove();
   if (!blocks[n].textContent.includes("\u00a0")) {
     for (const node of pageTexts(copy)) node.data = node.data.replace(/\u00a0/g, " ");
@@ -334,8 +383,14 @@ function textEdits(after, block) {
   return edits;
 }
 
-// The file with your changes in it
+// The file with your changes in it: the text, then the images
 function nextSource() {
+  let text = withText();
+  for (const [from, to] of swaps) text = text.replaceAll(from, () => to);
+  return text;
+}
+
+function withText() {
   const edits = [];
   for (const n of changed) {
     const after = edited(n);
@@ -357,18 +412,25 @@ function rewrite() {
   return doctype() + copy.documentElement.outerHTML + "\n";
 }
 
+function summary() {
+  const title = `"${titleText.textContent}"`;
+  const images = swaps.size > 1 ? swaps.size + " images" : "an image";
+  if (!swaps.size) return "Edit the text of " + title;
+  return (changed.size ? `Edit the text and replace ${images} in ` : `Replace ${images} in `) + title;
+}
+
 async function save() {
-  if (saving || !changed.size) return;
+  if (saving || !changed.size && !swaps.size) return;
   saving = true;
   update();
   const page = frame.contentDocument;
   try {
     const text = nextSource();
-    note = "Nothing to save: the text is as it was.";
+    note = "Nothing to save: the page is as it was.";
     if (text !== source) {
       const res = await gh(`${BASE}/contents/${path}`, {
         method: "PUT",
-        body: { message: `Edit the text of "${titleText.textContent}"`, content: toBase64(text), branch: REPO.branch, sha },
+        body: { message: summary(), content: toBase64(text), branch: REPO.branch, sha },
       });
       const count = blocks.length;
       setSource(text, res.content.sha);
@@ -377,8 +439,12 @@ async function save() {
       // blocks; then the frame has to be marked again
       if (blocks.length !== count) show();
     }
-    for (const el of page.querySelectorAll(`[${CHANGED}]`)) el.removeAttribute(CHANGED);
+    for (const el of page.querySelectorAll(`[${CHANGED}], [${SWAPPED}]`)) {
+      el.removeAttribute(CHANGED);
+      el.removeAttribute(SWAPPED);
+    }
     changed.clear();
+    swaps.clear();
   } catch (error) {
     note = error.status === 409
       ? "Not saved: this page changed somewhere else after you opened it. Reload to get that version."
@@ -390,8 +456,206 @@ async function save() {
   update();
 }
 
+// The image bar: over the frame, by the image you point at
+
+// The image an element shows, an <img>'s or its own background image,
+// unless it's the page's background or part of its controls
+function imageAt(node) {
+  const el = node?.nodeType === 1 ? node : null;
+  const page = el?.ownerDocument;
+  if (!el || el === page.documentElement || el === page.body || el.closest(IN_SKIP)) return null;
+  return imageOf(el);
+}
+
+const imageOf = (el) => el.localName === "img"
+  ? el.src || el.currentSrc || null
+  : /url\("((?:[^"\\]|\\.)*)"\)/.exec(el.ownerDocument.defaultView.getComputedStyle(el).backgroundImage)?.[1].replace(/\\(.)/g, "$1") ?? null;
+
+// The data: URL in the file behind an image in the frame: its own, or the
+// one of the image it replaced. Null if the file doesn't have it.
+function embedded(url) {
+  const from = [...swaps].find(([, to]) => to === url)?.[0] ?? url;
+  return from.startsWith("data:") && source.includes(from) ? from : null;
+}
+
+// The image at a URL, loaded and decoded, once per URL
+function picture(url) {
+  if (!pictures.has(url)) {
+    const img = new Image();
+    img.src = url;
+    pictures.set(url, img.decode().then(() => img));
+  }
+  return pictures.get(url);
+}
+
+function point(target) {
+  if (target !== pointed) {
+    pointed = target;
+    const url = imageAt(target);
+    if (url) return showTools(target, url);
+  }
+  if (shown?.el === target) keep();
+  else leave();
+}
+
+const keep = () => {
+  clearTimeout(hideTimer);
+  hideTimer = 0;
+};
+
+// A moment to reach the bar before it goes
+const leave = () => {
+  if (shown && !hideTimer) hideTimer = setTimeout(hideTools, 400);
+};
+
+function showTools(el, url) {
+  keep();
+  shown?.el.removeAttribute(POINTED);
+  el.setAttribute(POINTED, "");
+  shown = { el, url };
+  const stored = embedded(url);
+  replaceButton.disabled = !stored;
+  replaceButton.title = stored ? "Pick an image file, or drop one on the image" : "Only images stored in the page itself can be replaced";
+  sizeText.textContent = "";
+  tools.hidden = false;
+  place();
+  picture(url).then((img) => {
+    if (shown?.url !== url || !img.naturalWidth) return;
+    sizeText.textContent = `${img.naturalWidth}×${img.naturalHeight}`;
+    place();
+  }, () => {});
+}
+
+function hideTools() {
+  keep();
+  shown?.el.removeAttribute(POINTED);
+  shown = pointed = null;
+  tools.hidden = true;
+}
+
+// In the image's top right corner, or above or below it if it's too small
+function place() {
+  if (!shown) return;
+  const box = shown.el.getBoundingClientRect();
+  const width = frame.clientWidth;
+  const height = frame.clientHeight;
+  const top = Math.max(box.top, 0);
+  const bottom = Math.min(box.bottom, height);
+  const left = Math.max(box.left, 0);
+  const right = Math.min(box.right, width);
+  if (bottom - top < 1 || right - left < 1) return hideTools();   // hidden, or scrolled out of sight
+  const w = tools.offsetWidth;
+  const h = tools.offsetHeight;
+  const inside = right - left >= w + 16 && bottom - top >= h + 16;
+  const x = inside ? right - 8 - w : (left + right - w) / 2;
+  let y = inside ? top + 8 : box.top - 6 - h;
+  if (!inside && y < 0) y = box.bottom + 6;
+  const view = frame.getBoundingClientRect();
+  tools.style.left = view.left + Math.max(4, Math.min(x, width - w - 4)) + "px";
+  tools.style.top = view.top + Math.max(4, Math.min(y, height - h - 4)) + "px";
+}
+
+// A note in place of the status for a few seconds
+function flash(text) {
+  clearTimeout(flashTimer);
+  statusText.textContent = text;
+  flashTimer = setTimeout(update, 6000);
+}
+
+// Named for its key in a script's table of images, the file it's from, or
+// which of the file's images it is
+function fileName(el, url, type) {
+  if (!url.startsWith("data:")) return decodeURIComponent(new URL(url).pathname.split("/").pop()) || "image";
+  const mime = type.split(";")[0];
+  const ext = { "image/jpeg": "jpg", "image/svg+xml": "svg" }[mime] ?? mime.split("/")[1] ?? "png";
+  const from = embedded(url);
+  const n = from ? source.slice(0, source.indexOf(from)).split("data:image/").length : 0;
+  return `${el.dataset.img || (n ? "image-" + n : "image")}.${ext}`;
+}
+
+async function download({ el, url }) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(res.statusText);
+    const blob = await res.blob();
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName(el, url, blob.type);
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 60000);
+  } catch (error) {
+    flash("Couldn't download the image (" + error.message + ").");
+  }
+}
+
+// As a PNG, the one type every clipboard takes. Safari wants the item made
+// in the click itself, with the image still to come.
+function copy({ url }) {
+  const png = picture(url).then((img) => new Promise((resolve, reject) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.getContext("2d").drawImage(img, 0, 0);
+    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("it has no size"))), "image/png");
+  }));
+  navigator.clipboard.write([new ClipboardItem({ "image/png": png })]).then(() => {
+    copyButton.textContent = "Copied";
+    setTimeout(() => (copyButton.textContent = "Copy"), 1500);
+  }, (error) => flash("Couldn't copy the image (" + error.message + ")."));
+}
+
+async function replace(url, file) {
+  const from = embedded(url);
+  if (!from) return flash("Only images stored in the page itself can be replaced.");
+  if (!IMAGE_TYPES.test(file.type)) return flash("That isn't an image file. Pick a PNG, JPEG, GIF, WebP, AVIF or SVG.");
+  const to = await new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+  const [before, after] = await Promise.all([picture(url).catch(() => null), to && picture(to).catch(() => null)]);
+  if (!after) return flash("Couldn't open that image.");
+
+  if (to === from) swaps.delete(from);
+  else swaps.set(from, to);
+  const spots = swapShown(url, to);
+  for (const el of spots) el.toggleAttribute(SWAPPED, to !== from);
+  hideTools();
+  update();
+
+  const size = (img) => `${img.naturalWidth}×${img.naturalHeight}`;
+  const ratio = (img) => img.naturalWidth / img.naturalHeight;
+  const reshaped = before && ratio(before) && ratio(after) && Math.abs(ratio(after) / ratio(before) - 1) > 0.02;
+  flash(`Replaced${spots.length > 1 ? ` in ${spots.length} places` : ""}.` +
+    (reshaped ? ` It's ${size(after)} and the old one ${size(before)}, so it may look stretched or cut off.` : ""));
+}
+
+// Shows the new image in the frame wherever the old one was: in <img>s,
+// style attributes and the page's style sheets. Returns where it is now.
+function swapShown(from, to) {
+  const page = frame.contentDocument;
+  const swapIn = (style) => {
+    if (style?.backgroundImage?.includes(from)) style.backgroundImage = style.backgroundImage.replaceAll(from, () => to);
+  };
+  const walk = (rules) => {
+    for (const rule of rules) {
+      swapIn(rule.style);
+      if (rule.cssRules) walk(rule.cssRules);
+    }
+  };
+  for (const img of page.images) if (imageOf(img) === from) img.src = to;
+  for (const el of page.querySelectorAll("[style]")) swapIn(el.style);
+  for (const sheet of page.styleSheets) {
+    try {
+      walk(sheet.cssRules);
+    } catch {}                        // another site's style sheet can't be read
+  }
+  return [...page.querySelectorAll("*")].filter((el) => imageAt(el) === to);
+}
+
 function update() {
-  const count = changed.size;
+  const count = changed.size + swaps.size;
   statusText.textContent = saving ? "Saving…" : count ? `${count} unsaved change${count > 1 ? "s" : ""}` : note;
   saveButton.disabled = saving || !count;
   discardButton.disabled = saving || !count;
@@ -442,8 +706,23 @@ addEventListener("keydown", (event) => {
     save();
   }
 });
+tools.addEventListener("pointerenter", keep);
+tools.addEventListener("pointerleave", (event) => { if (event.pointerType !== "touch") leave(); });
+downloadButton.addEventListener("click", () => shown && download(shown));
+copyButton.addEventListener("click", () => shown && copy(shown));
+copyButton.hidden = !window.ClipboardItem;
+replaceButton.addEventListener("click", () => {
+  picking = shown?.url;
+  fileInput.click();
+});
+fileInput.addEventListener("change", () => {
+  const [file] = fileInput.files;
+  fileInput.value = "";
+  if (file && picking) replace(picking, file);
+});
+addEventListener("resize", hideTools);
 addEventListener("beforeunload", (event) => {
-  if (!changed.size) return;
+  if (!changed.size && !swaps.size) return;
   event.preventDefault();
   event.returnValue = "";             // older Safari
 });
