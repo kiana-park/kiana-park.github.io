@@ -1,39 +1,48 @@
 {
-  "projects": {
-    "CV": [
-      "s4htpheix3"
-    ],
-    "아산 AX": [
-      "0zzamnu6pq",
-      "13t2ykf210",
-      "15w369esx2",
-      "410mcfjxqg",
-      "4hmr5icaq5",
-      "81yrsmx4gk",
-      "aqt18qoab7",
-      "daicdwwxv1",
-      "dkco0ehcyd",
-      "fvytf2ffw9",
-      "gputhzt6ge",
-      "j5ipdohcbw",
-      "of8cvl6abl",
-      "pxx5tkxae7",
-      "q88502ckqu",
-      "v8yd6kr3xc",
-      "xv2ddqjlko"
-    ],
-    "천안 AX": [
-      "2bw6uphsba",
-      "bxz5thwyhn",
-      "fvqdz3z45i",
-      "izlc0gsyre",
-      "jvhro1mibl",
-      "ky8pwmmq6w",
-      "lxrjhq981s",
-      "ms6fqkcbqu",
-      "os40a65acz",
-      "q8i5h7wgyi",
-      "yfmu7gp474"
-    ]
-  }
+  "projects": [
+    {
+      "name": "천안 AX",
+      "pages": [
+        "yfmu7gp474",
+        "ky8pwmmq6w",
+        "izlc0gsyre",
+        "2bw6uphsba",
+        "bxz5thwyhn",
+        "fvqdz3z45i",
+        "jvhro1mibl",
+        "lxrjhq981s",
+        "ms6fqkcbqu",
+        "q8i5h7wgyi",
+        "os40a65acz"
+      ]
+    },
+    {
+      "name": "아산 AX",
+      "pages": [
+        "q88502ckqu",
+        "81yrsmx4gk",
+        "15w369esx2",
+        "of8cvl6abl",
+        "410mcfjxqg",
+        "v8yd6kr3xc",
+        "xv2ddqjlko",
+        "4hmr5icaq5",
+        "dkco0ehcyd",
+        "gputhzt6ge",
+        "pxx5tkxae7",
+        "j5ipdohcbw",
+        "fvytf2ffw9",
+        "aqt18qoab7",
+        "0zzamnu6pq",
+        "daicdwwxv1",
+        "13t2ykf210"
+      ]
+    },
+    {
+      "name": "CV",
+      "pages": [
+        "s4htpheix3"
+      ]
+    }
+  ]
 }
