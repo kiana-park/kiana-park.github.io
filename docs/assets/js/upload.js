@@ -9,7 +9,8 @@
 // removed in place, so the rest of the file is published byte for byte.
 //
 // links/ only. Runs after links.js and uses its gh(), toBase64(), el(),
-// linkButtons(), changeProjects(), renderLinks(), signOut() and state.
+// linkButtons(), changeProjects(), putIn(), groupPages(), renderLinks(),
+// signOut() and state.
 
 (() => {
   // Elements that hold speaker notes, by class: reveal.js and most HTML decks
@@ -214,7 +215,7 @@
     : (bytes / 1024 / 1024).toFixed(1) + " MB";
 
   function fillProjects() {
-    const names = [...new Set(pages.map((page) => projects[page.id]).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    const names = groupPages().map((group) => group.name).filter(Boolean);
     let last = "";
     try {
       last = localStorage.getItem(LAST_PROJECT_KEY) || "";
@@ -401,7 +402,7 @@
     collapsed.delete(name || NO_PROJECT);   // so the new page is in view
     saveCollapsed();
     showDone(page);
-    if (name) changeProjects((map) => { map[id] = name; }, `Shared links: put "${title}" in "${name}"`);
+    if (name) changeProjects((list) => putIn(list, id, name), `Shared links: put "${title}" in "${name}"`);
     else renderLinks();
   });
 

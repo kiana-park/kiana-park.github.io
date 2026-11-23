@@ -4,13 +4,19 @@
 // editor uses, and fetches the list from the GitHub API, so the list never
 // ships in the page.
 //
-// Pages are grouped by project. Which page belongs to which project is kept in
-// shared-links.json at the repository root, outside docs/ so the site never
-// serves it. "Organize" edits it from this page; each change is one commit.
-// "Upload" (upload.js, links/ only) publishes a new page from an HTML file;
-// each page's trash button deletes it.
-// Its format, page ids by project name:
-//   { "projects": { "Project name": ["bxz5thwyhn", "ms6fqkcbqu"] } }
+// Pages are grouped by project. Which page belongs to which project, and the
+// order projects and their pages are shown in, is kept in shared-links.json
+// at the repository root, outside docs/ so the site never serves it.
+// "Organize" edits it from this page: a project menu for each page, Rename,
+// and arrows that move pages and projects up and down. A change is committed
+// as soon as you make it, a move a moment later, so a run of moves is one
+// commit. "Upload" (upload.js, links/ only) publishes a new page from an HTML
+// file; each page's trash button deletes it.
+// Its format, projects in order, each with its page ids in order:
+//   { "projects": [{ "name": "Project name", "pages": ["bxz5thwyhn", "ms6fqkcbqu"] }] }
+// The first format, { "projects": { "Project name": [ids] } }, had no order.
+// It's read newest first, as it used to be shown, and the next change writes
+// it out in this one.
 
 const REPO = { owner: "kiana-park", repo: "kiana-park.github.io", branch: "main", dir: "docs/s" };
 const BASE = `/repos/${REPO.owner}/${REPO.repo}`;
@@ -20,7 +26,11 @@ const TOKEN_KEY = "gh:token";       // shared with docs/s/s4htpheix3 (CV editor)
 const OLD_TOKEN_KEYS = ["cv:token"];
 const COLLAPSED_KEY = "links:collapsed";
 const NO_PROJECT = "No project";
-const TRASH_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M6 4V2.75A.75.75 0 0 1 6.75 2h2.5a.75.75 0 0 1 .75.75V4M3.75 4l.6 9.1a1.5 1.5 0 0 0 1.5 1.4h4.3a1.5 1.5 0 0 0 1.5-1.4l.6-9.1M6.5 7v4.5M9.5 7v4.5"/></svg>';
+const MOVE_WAIT = 1000;             // ms after the last move before it's saved
+const ICON = (path) => `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${path}"/></svg>`;
+const TRASH_ICON = ICON("M2.5 4h11M6 4V2.75A.75.75 0 0 1 6.75 2h2.5a.75.75 0 0 1 .75.75V4M3.75 4l.6 9.1a1.5 1.5 0 0 0 1.5 1.4h4.3a1.5 1.5 0 0 0 1.5-1.4l.6-9.1M6.5 7v4.5M9.5 7v4.5");
+const UP_ICON = ICON("M8 13V3M4 7l4-4 4 4");
+const DOWN_ICON = ICON("M8 3v10M4 9l4 4 4-4");
 
 // Footer, on both pages
 const ownerLink = document.getElementById("owner-link");   // home page only
@@ -36,6 +46,7 @@ const uploadButton = document.getElementById("links-upload");
 const organizeButton = document.getElementById("links-organize");
 const refreshButton = document.getElementById("links-refresh");
 const hint = document.getElementById("links-hint");
+const savingText = document.getElementById("links-saving");
 const form = document.getElementById("signin-form");
 const tokenInput = document.getElementById("signin-token");
 const rememberInput = document.getElementById("signin-remember");
@@ -43,8 +54,11 @@ const errorText = document.getElementById("signin-error");
 
 let token = readToken();
 let pages = [];                     // newest first, from describe()
-let projects = {};                  // page id → project name
-let projectsSha = null;             // null until shared-links.json exists
+let order = [];                     // projects as shown, [{ name, ids }], with the changes not saved yet
+let saved = { list: [], sha: null };   // shared-links.json as last read or written; sha null until it exists
+const pending = [];                 // changes shown but not saved yet, [{ change, message }]
+let saveTimer = 0;
+let writing = null;                 // the save under way
 let organizing = false;
 let confirming = null;              // the open "Delete this page?" strip and its trash button
 const collapsed = new Set(readCollapsed());
@@ -105,57 +119,100 @@ function toBase64(text) {
 
 const fromBase64 = (data) => new TextDecoder().decode(Uint8Array.from(atob(data.replace(/\s/g, "")), (c) => c.charCodeAt(0)));
 
+// Reads the file in the first format by when pages were updated, so it needs
+// the pages loaded
 async function readProjects(ref = REPO.branch) {
   try {
     const file = await gh(`${BASE}/contents/${PROJECTS_FILE}?ref=${ref}`);
-    const map = {};
-    for (const [name, ids] of Object.entries(JSON.parse(fromBase64(file.content)).projects || {})) {
-      for (const id of ids) map[id] = name;
-    }
-    return { map, sha: file.sha };
+    return { list: listOf(JSON.parse(fromBase64(file.content)).projects || []), sha: file.sha };
   } catch (error) {
-    if (error.status === 404) return { map: {}, sha: null };
+    if (error.status === 404) return { list: [], sha: null };
     throw error;
   }
 }
 
-// Projects and their page ids in a fixed order (by code point, the same in
-// every browser), so each commit's diff shows only what changed
-function projectsText(map) {
-  const byName = {};
-  for (const [id, name] of Object.entries(map)) (byName[name] ||= []).push(id);
-  const names = Object.keys(byName).sort();
-  return JSON.stringify({ projects: Object.fromEntries(names.map((name) => [name, byName[name].sort()])) }, null, 2) + "\n";
+function listOf(projects) {
+  if (Array.isArray(projects)) return projects.map(({ name, pages: ids }) => ({ name, ids: [...ids] }));
+  const rank = new Map(pages.map((page, i) => [page.id, i]));
+  const at = (id) => rank.get(id) ?? Infinity;
+  return Object.entries(projects)
+    .map(([name, ids]) => ({ name, ids: [...ids].sort((a, b) => at(a) - at(b)) }))
+    .sort((a, b) => at(a.ids[0]) - at(b.ids[0]));
 }
 
-async function writeProjects(map, sha, message) {
+const projectsText = (list) =>
+  JSON.stringify({ projects: list.filter(({ ids }) => ids.length).map(({ name, ids }) => ({ name, pages: ids })) }, null, 2) + "\n";
+
+async function writeProjects(list, sha, message) {
   const res = await gh(`${BASE}/contents/${PROJECTS_FILE}`, {
     method: "PUT",
-    body: { message, content: toBase64(projectsText(map)), branch: REPO.branch, ...(sha && { sha }) },
+    body: { message, content: toBase64(projectsText(list)), branch: REPO.branch, ...(sha && { sha }) },
   });
   return res.content.sha;
 }
+
+const copyList = (list) => list.map(({ name, ids }) => ({ name, ids: [...ids] }));
+const projectOf = (id) => order.find(({ ids }) => ids.includes(id))?.name || "";
+const isShown = (id) => pages.some((page) => page.id === id);
+
+// Changes to the list. A page put in a project goes at its top, and a new
+// project at the top of the list.
+function putIn(list, id, name) {
+  for (const project of list) project.ids = project.ids.filter((other) => other !== id);
+  if (!name) return;
+  const project = list.find((other) => other.name === name);
+  if (project) project.ids.unshift(id);
+  else list.unshift({ name, ids: [id] });
+}
+
+// Renamed to another project's name, it joins that project's end
+function renameProject(list, name, next) {
+  const project = list.find((other) => other.name === name);
+  const target = list.find((other) => other.name === next);
+  if (!project) return;
+  if (!target) project.name = next;
+  else {
+    target.ids.push(...project.ids);
+    list.splice(list.indexOf(project), 1);
+  }
+}
+
+// Swaps items[i] with the nearest shown item above (step -1) or below (+1) it
+function swap(items, i, step, shown) {
+  let j = i + step;
+  while (j >= 0 && j < items.length && !shown(items[j])) j += step;
+  if (i >= 0 && j >= 0 && j < items.length) [items[i], items[j]] = [items[j], items[i]];
+}
+
+function movePage(list, id, step) {
+  const ids = list.find((project) => project.ids.includes(id))?.ids;
+  if (ids) swap(ids, ids.indexOf(id), step, isShown);
+}
+
+const moveProject = (list, name, step) =>
+  swap(list, list.findIndex((project) => project.name === name), step, (project) => project.ids.some(isShown));
 
 // One commit removes every file in the page's folder and, if it's in a
 // project, its id from shared-links.json. The contents API deletes one file
 // per commit, so the commit is built with the Git database API instead.
 async function deletePage(page) {
   const folder = `${REPO.dir}/${page.id}/`;
+  await flush();
   for (let tries = 1; ; tries++) {
     const head = (await gh(`${BASE}/git/ref/heads/${REPO.branch}`)).object.sha;
     const { tree } = await gh(`${BASE}/git/commits/${head}`);
-    const [files, saved] = await Promise.all([
+    const [files, latest] = await Promise.all([
       gh(`${BASE}/git/trees/${tree.sha}?recursive=1`),
       readProjects(head),
     ]);
     const changes = files.tree
       .filter((file) => file.type === "blob" && file.path.startsWith(folder))
       .map((file) => ({ path: file.path, mode: file.mode, type: "blob", sha: null }));
-    if (saved.map[page.id]) {
-      delete saved.map[page.id];
-      changes.push({ path: PROJECTS_FILE, mode: "100644", type: "blob", content: projectsText(saved.map) });
+    if (latest.list.some(({ ids }) => ids.includes(page.id))) {
+      putIn(latest.list, page.id, "");
+      changes.push({ path: PROJECTS_FILE, mode: "100644", type: "blob", content: projectsText(latest.list) });
     }
-    let projectsBlob = saved.sha;
+    let projectsBlob = latest.sha;
     if (changes.length) {
       const next = await gh(`${BASE}/git/trees`, { method: "POST", body: { base_tree: tree.sha, tree: changes } });
       const commit = await gh(`${BASE}/git/commits`, {
@@ -171,44 +228,90 @@ async function deletePage(page) {
       }
       projectsBlob = next.tree.find((entry) => entry.path === PROJECTS_FILE)?.sha ?? null;
     }
-    projects = saved.map;
-    projectsSha = projectsBlob;
+    saved = { list: latest.list, sha: projectsBlob };
+    order = copyList(saved.list);
     return;
   }
 }
 
-// If the file changed since it was loaded (GitHub answers 409, or 422 when it
-// was created meanwhile), the change is made again on top of the latest copy.
-// Focus goes back to the control that made the change, or to focusKey's.
-async function changeProjects(change, message, focusKey = document.activeElement?.dataset.focusKey) {
-  let failure = null;
-  setBusy(true);
-  try {
-    let next = { ...projects };
-    change(next);
-    try {
-      projectsSha = await writeProjects(next, projectsSha, message);
-    } catch (error) {
-      if (error.status !== 409 && error.status !== 422) throw error;
-      const latest = await readProjects();
-      next = latest.map;
-      change(next);
-      projectsSha = await writeProjects(next, latest.sha, message);
-    }
-    projects = next;
-  } catch (error) {
-    failure = error;
-  }
-  setBusy(false);
-  if (failure?.status === 401) return signOut("Your sign-in has expired. Sign in again to see your links.");
-  note.textContent = failure ? "Couldn't save the change (" + failure.message + ")." : "";
-  note.hidden = !failure;
+// Shows a change at once and saves it after `wait` ms, together with any
+// other change made by then. Focus goes back to the control that made the
+// change, or to focusKey's.
+function changeProjects(change, message, focusKey = document.activeElement?.dataset.focusKey, wait = 0) {
+  change(order);
+  pending.push({ change, message });
+  showSaving();
   renderLinks(focusKey);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flush, wait);
 }
 
+// Saves what's pending, then what was changed while it saved, until nothing
+// is left. Resolves when it's all saved, or failed.
+async function flush() {
+  clearTimeout(saveTimer);
+  if (writing) return writing;
+  writing = (async () => {
+    while (pending.length) {
+      let failure = null;
+      try {
+        await save(pending.splice(0));
+      } catch (error) {
+        failure = error;
+      }
+      if (failure?.status === 401) {
+        pending.length = 0;
+        return signOut("Your sign-in has expired. Sign in again to see your links.");
+      }
+      note.textContent = failure ? "Couldn't save the change (" + failure.message + ")." : "";
+      note.hidden = !failure;
+      // What's saved plus what's still pending is what's shown, unless the
+      // save failed or had to go on top of someone else's change
+      const next = copyList(saved.list);
+      for (const { change } of pending) change(next);
+      if (JSON.stringify(next) !== JSON.stringify(order)) {
+        order = next;
+        renderLinks(document.activeElement?.dataset.focusKey);
+      }
+    }
+  })();
+  try {
+    await writing;
+  } finally {
+    writing = null;
+    showSaving();
+  }
+}
+
+// If the file changed since it was read (GitHub answers 409, or 422 when it
+// was created meanwhile), the changes are made again on top of the latest copy
+async function save(batch) {
+  const messages = [...new Set(batch.map(({ message }) => message))];
+  const message = messages.length > 1 ? `Shared links: ${messages.length} changes\n\n${messages.join("\n")}` : messages[0];
+  let { list, sha } = saved;
+  for (let tries = 1; ; tries++) {
+    const next = copyList(list);
+    for (const { change } of batch) change(next);
+    try {
+      saved = { list: next, sha: await writeProjects(next, sha, message) };
+      return;
+    } catch (error) {
+      if ((error.status !== 409 && error.status !== 422) || tries === 3) throw error;
+      ({ list, sha } = await readProjects());
+    }
+  }
+}
+
+function showSaving() {
+  savingText.hidden = !pending.length && !writing;
+}
+
+// An arrow at the end of its list stays disabled
 function setBusy(busy) {
   list.setAttribute("aria-busy", busy);
-  for (const control of [uploadButton, organizeButton, refreshButton, ...list.querySelectorAll("button, select")]) control.disabled = busy;
+  for (const control of [uploadButton, organizeButton, refreshButton, ...list.querySelectorAll("button, select")]) {
+    control.disabled = busy || "end" in control.dataset;
+  }
 }
 
 function el(tag, className, text) {
@@ -238,7 +341,8 @@ async function describe(entry) {
   };
 }
 
-function row(page, projectNames) {
+// place: { first, last } in its project, for the arrows; none with no project
+function row(page, projectNames, place) {
   const item = el("li", "link");
   const title = el("a", "link__title", page.title);
   title.href = page.url;
@@ -251,9 +355,37 @@ function row(page, projectNames) {
   if (page.noindex) meta.append(el("span", null, "noindex"));
 
   const actions = el("div", "link__actions");
-  actions.append(...(organizing ? [projectPicker(page, projectNames)] : [...linkButtons(page), deleteButton(page, item)]));
+  if (!organizing) actions.append(...linkButtons(page), deleteButton(page, item));
+  else {
+    actions.append(projectPicker(page, projectNames));
+    if (place) {
+      actions.append(moveButtons(`"${page.title}"`, "page:" + page.id, place, (step) => changeProjects(
+        (list) => movePage(list, page.id, step),
+        `Shared links: move "${page.title}" ${step < 0 ? "up" : "down"}`,
+        undefined,
+        MOVE_WAIT,
+      )));
+    }
+  }
   item.append(title, meta, actions);
   return item;
+}
+
+// Up and down arrows for a page or a project
+function moveButtons(label, key, { first, last }, move) {
+  const arrows = el("span", "order");
+  for (const [step, way, icon, end] of [[-1, "up", UP_ICON, first], [1, "down", DOWN_ICON, last]]) {
+    const button = el("button", "button button--sm order__button");
+    button.type = "button";
+    button.innerHTML = icon;
+    button.dataset.focusKey = `${key}:${way}`;
+    if (end) button.dataset.end = "";
+    button.disabled = end;
+    button.setAttribute("aria-label", `Move ${label} ${way}`);
+    button.addEventListener("click", () => move(step));
+    arrows.append(button);
+  }
+  return arrows;
 }
 
 // The trash button opens a strip under the row that asks once more
@@ -365,7 +497,7 @@ function linkButtons(page) {
 
 // Organize mode: a menu of the projects, "No project" and "New project…"
 function projectPicker(page, projectNames) {
-  const current = projects[page.id] || "";
+  const current = projectOf(page.id);
   const select = el("select", "picker__select");
   select.dataset.focusKey = "page:" + page.id;
   select.setAttribute("aria-label", "Project for " + page.title);
@@ -386,7 +518,7 @@ function projectPicker(page, projectNames) {
     collapsed.delete(name || NO_PROJECT);   // so the page stays in view
     saveCollapsed();
     changeProjects(
-      (map) => { if (name) map[page.id] = name; else delete map[page.id]; },
+      (list) => putIn(list, page.id, name),
       `Shared links: move "${page.title}" to ${name ? `"${name}"` : "no project"}`,
     );
   });
@@ -396,24 +528,22 @@ function projectPicker(page, projectNames) {
   return picker;
 }
 
-// Groups in the order of their newest page (pages are sorted newest first),
-// with pages that have no project last
+// Projects in their order, then the pages with no project, newest first
 function groupPages() {
-  const groups = new Map();
-  for (const page of pages) {
-    const name = projects[page.id] || "";
-    if (!groups.has(name)) groups.set(name, []);
-    groups.get(name).push(page);
-  }
-  return [...groups].map(([name, items]) => ({ name, items })).sort((a, b) => !a.name - !b.name);
+  const byId = new Map(pages.map((page) => [page.id, page]));
+  const groups = order.map(({ name, ids }) => ({ name, items: ids.map((id) => byId.get(id)).filter(Boolean) }));
+  const listed = new Set(order.flatMap(({ ids }) => ids));
+  groups.push({ name: "", items: pages.filter((page) => !listed.has(page.id)) });
+  return groups.filter(({ items }) => items.length);
 }
 
+// projectNames: the projects shown, in order
 function groupSection({ name, items }, index, projectNames) {
   const section = el("section", "group");
   const links = el("ul", "links");
   links.setAttribute("role", "list");
   links.id = "group-" + index;
-  links.append(...items.map((page) => row(page, projectNames)));
+  links.append(...items.map((page, i) => row(page, projectNames, name && { first: i === 0, last: i === items.length - 1 })));
 
   const label = name || NO_PROJECT;
   const isOpen = !collapsed.has(label);
@@ -438,7 +568,8 @@ function groupSection({ name, items }, index, projectNames) {
   title.append(toggle);
   const head = el("div", "group__head");
   head.append(title);
-  if (items[0].updated) head.append(el("span", "group__date", "Updated " + formatDate(items[0].updated)));
+  const newest = Math.max(...items.map((page) => page.updated || 0));
+  if (newest) head.append(el("span", "group__date", "Updated " + formatDate(new Date(newest))));
 
   if (organizing && name) {
     const rename = el("button", "button button--sm", "Rename");
@@ -448,12 +579,18 @@ function groupSection({ name, items }, index, projectNames) {
       const next = (window.prompt(`Rename "${name}" to:`, name) || "").trim();
       if (!next || next === name) return;
       changeProjects(
-        (map) => { for (const id in map) if (map[id] === name) map[id] = next; },
+        (list) => renameProject(list, name, next),
         `Shared links: rename project "${name}" to "${next}"`,
         "group:" + next,
       );
     });
-    head.append(rename);
+    const place = { first: name === projectNames[0], last: name === projectNames.at(-1) };
+    head.append(rename, moveButtons(`project "${name}"`, "group:" + name, place, (step) => changeProjects(
+      (list) => moveProject(list, name, step),
+      `Shared links: move project "${name}" ${step < 0 ? "up" : "down"}`,
+      undefined,
+      MOVE_WAIT,
+    )));
   }
 
   section.append(head, links);
@@ -463,7 +600,7 @@ function groupSection({ name, items }, index, projectNames) {
 function renderLinks(focusKey) {
   confirming = null;
   const groups = groupPages();
-  const projectNames = groups.map((group) => group.name).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  const projectNames = groups.map((group) => group.name).filter(Boolean);
   if (projectNames.length) {
     list.replaceChildren(...groups.map((group, i) => groupSection(group, i, projectNames)));
   } else {
@@ -473,23 +610,25 @@ function renderLinks(focusKey) {
     links.append(...pages.map((page) => row(page, projectNames)));
     list.replaceChildren(links);
   }
-  if (focusKey) list.querySelector(`[data-focus-key="${CSS.escape(focusKey)}"]`)?.focus();
+  if (focusKey) {
+    let target = list.querySelector(`[data-focus-key="${CSS.escape(focusKey)}"]`);
+    if (target?.disabled) target = target.parentElement.querySelector(":enabled") || target;   // an arrow that reached the end: the other one
+    target?.focus();
+  }
 }
 
 async function loadLinks() {
+  await flush();
   list.replaceChildren();
   count.textContent = "";
   note.textContent = "Loading…";
   note.hidden = false;
   try {
-    const [entries, saved] = await Promise.all([
-      gh(`${BASE}/contents/${REPO.dir}?ref=${REPO.branch}`),
-      readProjects(),
-    ]);
+    const entries = await gh(`${BASE}/contents/${REPO.dir}?ref=${REPO.branch}`);
     pages = await Promise.all(entries.filter((e) => e.type === "dir").map(describe));
     pages.sort((a, b) => (b.updated || 0) - (a.updated || 0));
-    projects = saved.map;
-    projectsSha = saved.sha;
+    saved = await readProjects();
+    order = copyList(saved.list);
     renderLinks();
     count.textContent = pages.length;
     note.textContent = pages.length ? "" : "No shared pages yet.";
@@ -509,6 +648,7 @@ function render() {
   tools.hidden = !token;
   if (!token) {
     pages = [];
+    pending.length = 0;
     setOrganizing(false);
     window.closeUpload?.();
     list.replaceChildren();
@@ -521,6 +661,7 @@ function setOrganizing(on) {
   organizing = on;
   organizeButton.textContent = on ? "Done" : "Organize";
   hint.hidden = !on;
+  if (!on) flush();                   // the last moves, now rather than in a moment
   if (pages.length) renderLinks();
 }
 
@@ -539,6 +680,11 @@ function signOut(message = "") {
 }
 
 signoutButton.addEventListener("click", () => signOut());
+addEventListener("beforeunload", (event) => {
+  if (!pending.length && !writing) return;
+  event.preventDefault();
+  event.returnValue = "";             // older Safari
+});
 
 if (form) {
   refreshButton.addEventListener("click", loadLinks);

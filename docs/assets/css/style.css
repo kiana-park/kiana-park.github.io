@@ -856,7 +856,7 @@ a {
 }
 
 @media (hover: hover) {
-  .button:hover {
+  .button:where(:not(:disabled)):hover {
     border-color: var(--text);
     background-color: var(--text);
     color: var(--surface);
@@ -933,6 +933,17 @@ button.button:disabled {
 .links__status {
   color: var(--text-3);
   font-size: var(--text-sm);
+}
+
+/* Keeps its place while hidden, so the list doesn't jump as you click arrows */
+.links__saving {
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.links__saving[hidden] {
+  display: inline;
+  visibility: hidden;
 }
 
 /* A project: its name folds its pages away; a line on the left ties the
@@ -1052,6 +1063,25 @@ button.button:disabled {
 .picker__select:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* Organize: up and down arrows, round like the trash button */
+.order {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.order__button {
+  justify-content: center;
+  width: calc(1.25rem + 2 * var(--space-1) + 2px);   /* as tall as the buttons beside it */
+  height: calc(1.25rem + 2 * var(--space-1) + 2px);
+  padding: 0;
+  color: var(--text-2);
+}
+
+.order__button svg {
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 /* Phones: Open and Copy link sit below the title; 600px+: to its right */
