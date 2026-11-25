@@ -1,9 +1,14 @@
 {
   "projects": [
     {
+      "name": "Oracle Cloud",
+      "pages": [
+        "bvtjh1bsva"
+      ]
+    },
+    {
       "name": "천안 AX",
       "pages": [
-        "bvtjh1bsva",
         "qo3khs1pcw",
         "yfmu7gp474",
         "ky8pwmmq6w",
