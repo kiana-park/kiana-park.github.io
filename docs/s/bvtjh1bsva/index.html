@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<script src="https://kiana-park.github.io/assets/js/pdf.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="editor" content="self">
+<title>공용 바이브코딩 개발 서버 구축 가이드</title>
+<link rel="stylesheet" href="https://kiana-park.github.io/assets/css/md.css">
+<script src="https://kiana-park.github.io/assets/js/vendor/marked.min.js" defer></script>
+<script src="https://kiana-park.github.io/assets/js/md.js" defer></script>
+</head>
+<body>
+<main id="doc"><noscript>This page needs JavaScript to show its text.</noscript></main>
+<script type="text/markdown" id="md">
+# 공용 바이브코딩 개발 서버 구축 가이드
+
+25명 동시 접속, Claude Code 기반 바이브코딩 수업용 공용 서버.
+Oracle Cloud(OCI) 기준, 2026-08 구축 완료 버전.
+
+---
+
+## 1. 요구사항과 사양 산정
+
+Claude Code는 LLM 추론이 Anthropic API에서 실행되므로 서버 부하는 **터미널 세션 + Node 프로세스 + 빌드/dev 서버 + 파일 I/O**. GPU 불필요.
+
+**유저 1인당 기준치**
+
+| 항목 | 평균 | 피크(빌드 시) |
+|---|---|---|
+| vCPU | 1~1.5 | 2~4 |
+| RAM | 3~4GB | 6~8GB |
+| 스토리지 | 실사용 20~30GB | 쿼터 40~50GB |
+
+**선정 사양: 16 vCPU / 64GB RAM / SSD 1TB**
+- 전원이 동시에 빌드하지 않으므로 오버서브스크립션 전제
+- 부족 시 Flex 셰이프라 나중에 무중단에 가깝게 증설 가능 (정지 → 셰이프 편집, 수 분)
+
+## 2. 클라우드 4사 비교 (16 vCPU / 64GB + SSD 1TB, 월 기준)
+
+| | AWS (서울) | GCP (서울) | **Oracle (선택)** | NCP |
+|---|---|---|---|---|
+| 인스턴스 | m7i.4xlarge | n2-standard-16 | E5.Flex 8 OCPU/64GB | Standard g3 |
+| 컴퓨트/월 | ~$710 | ~$710 | **~$269** | ~₩50만 추정 |
+| SSD 1TB/월 | ~$91 | ~$120 | **~$43 (VPU10)** | ~₩11.5만 |
+| 합계/월 | ~₩110만 | ~₩115만 | **~₩41만** | ~₩62만 |
+
+**Oracle 선택 이유**: 전 리전 동일 단가 정책으로 서울/춘천도 미국과 같은 가격, 4사 중 최저가. 월 10TB 무료 egress. Flex 셰이프로 OCPU/메모리 1단위 조정 가능.
+
+- Oracle 과금: OCPU당 $0.030/h + 메모리 GB당 $0.002/h → 8 OCPU + 64GB = $0.368/h
+- 1 OCPU = 2 vCPU (SMT)
+- 서울(ap-seoul-1) vs 춘천(ap-chuncheon-1): 요금·성능 동일, 용량 잡히는 쪽 선택
+
+## 3. OCI 인스턴스 생성 설정 (최종값)
+
+| 항목 | 값 | 비고 |
+|---|---|---|
+| 셰이프 | VM.Standard.E5.Flex, **8 OCPU / 64GB** | 기본값 1 OCPU라 슬라이더로 직접 지정 필수 |
+| 이미지 | Canonical Ubuntu 24.04 | 기본 유저 `ubuntu` |
+| 용량 유형 | on-demand | 과금 방식일 뿐, 사양 자동 조절 아님 |
+| 부트 볼륨 | **100GB / VPU 10** | OS·런타임·Docker 이미지용 |
+| 블록 볼륨 | **1,024GB / VPU 10** (`dev-server-home-1tb`) | /home 전용. VPU10 = 1TB 기준 최대 25,000 IOPS |
+| 볼륨 연결 유형 | **매개변수 가상화(Paravirtualized)** | iSCSI는 수동 연결 명령 필요. 콘솔 번역이 "매개변수 가상화" |
+| 보안 부팅/TPM | 사용 안함 | 커스텀 이미지 생성 제약 회피 |
+| 네트워크 | 퍼블릭 IPv4 할당 | SSH 접속용. 보안 목록에 TCP 22 인바운드 필요 |
+| SSH 키 | 자동 생성 → **프라이빗 키 즉시 다운로드** | 다시 표시 안 됨. 퍼블릭 키는 프라이빗 키에서 재생성 가능 |
+
+> 블록 볼륨은 사용 중 온라인 확장 가능(축소 불가). VPU도 무중단 변경 가능(10→20).
+
+## 4. 관리자 첫 접속
+
+```bash
+chmod 600 <프라이빗키>          # 이거 안 하면 Permission denied (publickey)
+ssh -i <프라이빗키> ubuntu@<퍼블릭IP>
+```
+
+VS Code Remote-SSH용 `~/.ssh/config`:
+
+```
+Host dev-server
+    HostName <퍼블릭IP>
+    User ubuntu
+    IdentityFile ~/.ssh/<프라이빗키>
+```
+
+## 5. 블록 볼륨 → /home 마운트
+
+`lsblk`로 1TB 디스크(`sdb`) 확인 후:
+
+```bash
+# XFS 포맷 (prjquota용)
+sudo mkfs.xfs /dev/sdb
+
+# 기존 /home 내용(ubuntu의 .ssh 포함!) 보존 이전
+sudo mount /dev/sdb /mnt
+sudo rsync -aX /home/ /mnt/
+sudo umount /mnt
+
+# fstab 등록 (UUID 기반) + 마운트
+UUID=$(sudo blkid -s UUID -o value /dev/sdb)
+echo "UUID=$UUID /home xfs defaults,prjquota,nofail 0 2" | sudo tee -a /etc/fstab
+sudo systemctl daemon-reload
+sudo mount /home
+df -h /home                      # 1.0T 확인
+ls -la /home/ubuntu/.ssh         # authorized_keys 존재 확인
+```
+
+⚠️ **기존 SSH 세션을 유지한 채, 새 터미널에서 재접속이 되는지 반드시 확인** 후 다음 단계 진행. rsync를 건너뛰면 authorized_keys가 가려져 접속이 잠김.
+
+## 6. 유저 생성 + 키 발급 (비밀번호 로그인 없음)
+
+방식: 관리자가 유저별 ed25519 키 쌍을 생성해 퍼블릭 키를 서버에 등록하고, 프라이빗 키를 개별 배포. `PasswordAuthentication`은 기본값(거부) 유지 → 무차별 대입 공격 원천 차단.
+
+```bash
+sudo mkdir -p /root/user-keys        # 원본 보관(재발급용)
+mkdir -p ~/user-keys-dist            # 배포용
+
+for i in $(seq -w 1 25); do
+  sudo adduser --disabled-password --gecos "" user$i
+  sudo ssh-keygen -t ed25519 -N "" -C "user$i" -f /root/user-keys/user$i
+  sudo mkdir -p /home/user$i/.ssh
+  sudo cp /root/user-keys/user$i.pub /home/user$i/.ssh/authorized_keys
+  sudo chown -R user$i:user$i /home/user$i/.ssh
+  sudo chmod 700 /home/user$i/.ssh
+  sudo chmod 600 /home/user$i/.ssh/authorized_keys
+
+  # 배포용 사본 (ubuntu 소유 + 600. 절대 777 금지 — 타 유저가 읽음)
+  sudo cp /root/user-keys/user$i ~/user-keys-dist/user$i.key
+  sudo chown ubuntu:ubuntu ~/user-keys-dist/user$i.key
+  chmod 600 ~/user-keys-dist/user$i.key
+done
+```
+
+보조강사 공용 테스트 계정 `user99`도 동일 방식으로 생성.
+
+**키 일괄 다운로드 (관리자 PC에서):**
+
+```bash
+scp -i <관리자키> -r ubuntu@<서버IP>:~/user-keys-dist ./
+```
+
+배포 후 서버의 `~/user-keys-dist`는 삭제, `/root/user-keys`는 재발급용으로 보관.
+
+**수강생 안내문 필수 포함 사항:**
+- `chmod 600 userNN.key` 후 `ssh -i userNN.key userNN@<서버IP>` (윈도우는 키를 `C:\Users\이름\.ssh\`에 보관)
+- 계정명은 userNN 고정, 명단(userNN=이름)은 별도 관리
+- `Killed` 메시지 = 에러 아님, 메모리 상한 도달 (아래 8절)
+
+## 7. 유저별 디스크 쿼터 (XFS project quota)
+
+user01~20: 50GB / user21~25: 40GB (총 상한 1,200GB > 1,024GB 오버커밋 허용) / user99: 50GB
+
+```bash
+# 01~20 → 50GB
+for i in $(seq -w 1 20); do
+  n=$((10#$i))
+  echo "$n:/home/user$i" | sudo tee -a /etc/projects
+  echo "user$i:$n" | sudo tee -a /etc/projid
+  sudo xfs_quota -x -c "project -s user$i" /home
+  sudo xfs_quota -x -c "limit -p bhard=50g user$i" /home
+done
+
+# 21~25 → 40GB
+for i in $(seq -w 21 25); do
+  n=$((10#$i))
+  echo "$n:/home/user$i" | sudo tee -a /etc/projects
+  echo "user$i:$n" | sudo tee -a /etc/projid
+  sudo xfs_quota -x -c "project -s user$i" /home
+  sudo xfs_quota -x -c "limit -p bhard=40g user$i" /home
+done
+
+# user99 → 50GB
+echo "99:/home/user99" | sudo tee -a /etc/projects
+echo "user99:99" | sudo tee -a /etc/projid
+sudo xfs_quota -x -c "project -s user99" /home
+sudo xfs_quota -x -c "limit -p bhard=50g user99" /home
+
+# 확인
+sudo xfs_quota -x -c "report -p -h" /home
+```
+
+개별 조정: `sudo xfs_quota -x -c "limit -p bhard=60g user07" /home`
+
+## 8. 계정별 CPU/RAM 상한 (systemd cgroup)
+
+- `CPUQuota=300%` = 계정당 최대 3코어
+- `MemoryHigh=6G` = 6GB 초과 시 죽이지 않고 스로틀링(일시적 초과 허용)
+- `MemoryMax=10G` = 10GB에서 OOM Kill (폭주 방어선)
+- 오버커밋 전제: 상한 목적은 총합 보장이 아니라 한 명의 폭주로부터 전체 보호
+
+```bash
+sudo mkdir -p /etc/systemd/system/user-.slice.d
+sudo tee /etc/systemd/system/user-.slice.d/limits.conf << 'EOF'
+[Slice]
+CPUQuota=300%
+MemoryHigh=6G
+MemoryMax=10G
+MemorySwapMax=1G
+TasksMax=2048
+EOF
+sudo systemctl daemon-reload
+```
+
+**관리자(ubuntu, UID 1000) 예외 해제:**
+
+```bash
+sudo mkdir -p /etc/systemd/system/user-1000.slice.d
+sudo tee /etc/systemd/system/user-1000.slice.d/override.conf << 'EOF'
+[Slice]
+CPUQuota=
+MemoryHigh=
+MemoryMax=
+MemorySwapMax=
+TasksMax=
+EOF
+sudo systemctl daemon-reload
+```
+
+적용은 **새 세션부터**. 검증(유저 계정으로 재접속 후):
+
+```bash
+systemctl status user-$(id -u).slice | grep -E "Memory|CPU"   # max: 10.0G 표시
+python3 -c "a = bytearray(12 * 1024**3)"                      # → Killed 나오면 정상
+```
+
+`Killed` 원리: cgroup 상한 도달 시 커널 OOM Killer가 **해당 유저 cgroup 내부의** 최대 점유 프로세스만 종료. 다른 유저는 영향 없음.
+
+## 9. 유저별 dev 서버 포트 자동 지정
+
+포트 충돌 방지: userNN → PORT=30NN (user01→3001 … user25→3025, user99→3099)
+
+```bash
+sudo tee /etc/profile.d/dev-port.sh << 'EOF'
+# userNN → PORT=30NN 자동 지정
+case "$(id -un)" in
+  user[0-9][0-9])
+    export PORT=$((3000 + 10#${LOGNAME#user}))
+    ;;
+esac
+EOF
+```
+
+- Next.js/CRA는 `PORT` 자동 인식. **Vite는 미인식** → `npm run dev -- --port $PORT` 또는 `vite.config.js`에 `server: { port: Number(process.env.PORT) || 3000 }`
+- 브라우저 확인은 VS Code Remote-SSH의 자동 포트포워딩 사용(각자 PC의 `localhost:30NN`). **OCI 보안 목록에 3001~3025를 열지 않음** — 열 필요도 없고 보안상 닫는 게 맞음
+
+## 10. 공통 개발 도구 설치
+
+```bash
+sudo apt update && sudo apt install -y build-essential git curl unzip
+
+# Node.js 22 LTS
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Claude Code 전역 설치
+sudo npm install -g @anthropic-ai/claude-code
+```
+
+유저는 접속 후 `claude` 실행 → 각자 Anthropic 계정 인증.
+
+## 11. 운영 치트시트
+
+```bash
+# 디스크 사용 현황 (유저별)
+sudo xfs_quota -x -c "report -p -h" /home
+
+# 유저별 실시간 CPU/RAM
+systemd-cgtop user.slice
+
+# 특정 유저 세션 강제 종료
+sudo loginctl terminate-user user07
+
+# 키 재발급 (분실 시)
+sudo cp /root/user-keys/user07 ~/reissue.key && sudo chown ubuntu:ubuntu ~/reissue.key && chmod 600 ~/reissue.key
+# → scp로 전달 후 rm ~/reissue.key
+
+# 유저 이름 변경 시 (권장하지 않음 — 쿼터 설정 3곳 동반 수정 필요)
+# usermod -l / usermod -d -m / groupmod -n + /etc/projects, /etc/projid 수정 + project -s 재실행
+```
+
+**증설 경로**
+- CPU/RAM: 인스턴스 정지 → 셰이프 편집(예: 10~12 OCPU) → 시작. 수 분 소요
+- 디스크: 블록 볼륨 온라인 확장(축소 불가) → `sudo xfs_growfs /home`
+- I/O: 볼륨 VPU 10 → 20 무중단 변경
+
+**트러블슈팅**
+| 증상 | 원인/조치 |
+|---|---|
+| `Permission denied (publickey)` | ① 키 chmod 600 ② 유저명 확인(ubuntu/userNN) ③ VS Code는 config에 IdentityFile 명시 |
+| SSH 타임아웃 | VCN 보안 목록 인그레스에 `0.0.0.0/0 TCP 22` 확인 |
+| 프로세스가 말없이 `Killed` | MemoryMax(10G) 도달. 정상 동작 |
+| `No space left on device` (남는데도) | 유저 쿼터 도달. `xfs_quota report`로 확인 |
+| dev 서버 포트 충돌 | `echo $PORT` 확인, Vite는 `--port $PORT` 명시 |
+</script>
+</body>
+</html>

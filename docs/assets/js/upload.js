@@ -2,6 +2,9 @@
 // docs/s/<random id>/index.html. One commit adds the page and, if you put it
 // in a project, a second one updates shared-links.json.
 //
+// A Markdown file (.md) becomes a page too: its text goes into a small HTML
+// page that assets/js/md.js renders, and that you can edit there afterwards.
+//
 // Before publishing you pick its project, whether search engines may list it,
 // whether it gets a "Save as PDF" button (assets/js/pdf.js) and, when it has
 // speaker notes, whether to keep them. Those choices change the file's own
@@ -188,6 +191,35 @@
     return splice(html, edits);
   }
 
+  // The page a Markdown file is published as: the Markdown itself, as text,
+  // in a script element that assets/js/md.js renders and edits. Its title is
+  // the first "# heading", or the file's name. "</script" and "<!--" can't
+  // appear as they are inside a script element; md.js turns them back.
+  function markdownPage(markdown, name) {
+    const text = markdown.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").replace(/^\n+|\s+$/g, "");
+    const heading = /^#[ \t]+(.+)$/m.exec(text)?.[1] || "";
+    const title = heading.replace(/[*_`~]|\\(?=[^\w\s])/g, "").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/\s+#*\s*$/, "").trim() || name;
+    return `<!DOCTYPE html>
+<html lang="${/[\uAC00-\uD7A3]/.test(text) ? "ko" : "en"}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="editor" content="self">
+<title>${title.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</title>
+<link rel="stylesheet" href="${SITE}/assets/css/md.css">
+<script src="${SITE}/assets/js/vendor/marked.min.js" defer></script>
+<script src="${SITE}/assets/js/md.js" defer></script>
+</head>
+<body>
+<main id="doc"><noscript>This page needs JavaScript to show its text.</noscript></main>
+<script type="text/markdown" id="md">
+${text.replace(/<\/script/gi, "<\\/script").replace(/<!--/g, "<\\!--")}
+</script>
+</body>
+</html>
+`;
+  }
+
   // Relative addresses the page loads or links to: those files aren't uploaded
   function localFiles(doc) {
     if (doc.querySelector("base[href]")) return [];
@@ -236,8 +268,10 @@
     rows.hidden = warning.hidden = publishButton.disabled = true;
 
     let html = null;
-    if (!/\.html?$/i.test(file.name) && file.type !== "text/html") {
-      status.textContent = "Choose an HTML file (.html).";
+    const isMarkdown = /\.(?:md|markdown)$/i.test(file.name);
+    const name = file.name.replace(/\.(?:html?|md|markdown)$/i, "");
+    if (!isMarkdown && !/\.html?$/i.test(file.name) && file.type !== "text/html") {
+      status.textContent = "Choose an HTML or a Markdown file (.html, .md).";
     } else if (file.size > MAX_BYTES) {
       status.textContent = "This file is over 100 MB, more than GitHub accepts.";
     } else {
@@ -249,9 +283,9 @@
       if (mine !== run) return;   // closed, or another file chosen meanwhile
     }
     if (html == null) return titleText.focus();
+    if (isMarkdown) html = markdownPage(html, name);
 
     const doc = new DOMParser().parseFromString(html, "text/html");
-    const name = file.name.replace(/\.html?$/i, "");
     chosen = {
       name: file.name,
       html,
