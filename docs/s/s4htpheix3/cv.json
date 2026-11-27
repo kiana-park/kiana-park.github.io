@@ -783,7 +783,7 @@
             "en": "Software & Infrastructure"
           },
           "text": {
-            "ko": "React, Flask, PostgreSQL(pgvector), Streamlit, Linux 서버 운영(AWS EC2)",
+            "ko": "React, Flask, PostgreSQL(pgvector), Streamlit, Linux 서버 운영(AWS EC2, NCP, Oracle Cloud)",
             "en": "React, Flask, PostgreSQL (pgvector), Streamlit, Linux server operations (AWS EC2)"
           }
         },
